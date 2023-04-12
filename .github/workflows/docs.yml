@@ -1,0 +1,16 @@
+name: docs
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "overrides/**"
+
+jobs:
+  call-docs-workflow:
+    uses: ZachChristensen28/splunk-github-wfa/.github/workflows/docs.yml@main
+    with:
+      config-path: docs/requirements.txt

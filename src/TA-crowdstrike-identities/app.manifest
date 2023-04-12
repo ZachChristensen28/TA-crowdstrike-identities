@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "2.0.0",
   "info": {
-    "title": "Crowdstrike Identities Add-on for Splunk",
+    "title": "CrowdStrike Falcon Identity Protection Add-on for Splunk",
     "id": {
       "group": null,
       "name": "TA-crowdstrike-identities",
@@ -9,45 +9,49 @@
     },
     "author": [
       {
-        "name": "",
+        "name": "ZachTheSplunker",
         "email": null,
         "company": null
       }
     ],
     "releaseDate": null,
-    "description": "Ingest Crowdstrike Identities into Splunk",
+    "description": "Ingest CrowdStrike Falcon Identity Protection data into Splunk.",
     "classification": {
-      "intendedAudience": null,
-      "categories": [],
-      "developmentStatus": null
+      "intendedAudience": "Security",
+      "categories": [
+        "Security, Fraud, & Compliance"
+      ],
+      "developmentStatus": "Production/Stable"
     },
     "commonInformationModels": null,
     "license": {
-      "name": null,
+      "name": "Apache License",
       "text": null,
-      "uri": null
+      "uri": "http://www.apache.org/licenses/"
     },
     "privacyPolicy": {
-      "name": null,
+      "name": "Splunk Privacy Policy",
       "text": null,
-      "uri": null
+      "uri": "https://www.splunk.com/en_us/legal/privacy/privacy-policy.html"
     },
     "releaseNotes": {
-      "name": null,
+      "name": "README",
       "text": null,
-      "uri": null
+      "uri": "https://splunk-ta-crowdstrike.ztsplunker.com/"
     }
   },
   "dependencies": {
   },
-  "tasks": [],
-  "inputGroups": {
-  },
-  "incompatibleApps": {
-  },
-  "platformRequirements": {
-    "splunk": {
-      "Enterprise": "*"
-    }
-  }
+  "tasks": [
+    "crowdstrike_identities"
+  ],
+  "inputGroups": null,
+  "incompatibleApps": null,
+  "platformRequirements": null,
+  "supportedDeployments": [
+    "*"
+  ],
+  "targetWorkloads": [
+    "*"
+  ]
 }
