@@ -18,7 +18,7 @@ fields = [
         'interval',
         required=True,
         encrypted=False,
-        default='4 * * * *',
+        default='3 3 * * *',
         validator=validator.Pattern(
             regex=r"""(?:(?:^[3-9][0-9][0-9]$|^[1-9][0-9][0-9][0-9]\d*$)|(?:^\S+(?: \S+){4}))""",
         )
