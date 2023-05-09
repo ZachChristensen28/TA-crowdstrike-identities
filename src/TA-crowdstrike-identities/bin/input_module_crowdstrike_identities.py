@@ -164,7 +164,8 @@ def collect_events(helper, ew):
             base_url=cloud_env,
             user_agent=user_agent,
             page_count=page_count,
-            next_page_exists=next_page_exists
+            next_page_exists=next_page_exists,
+            current_identity_count=identity_count
         )
         helper.log_info(event_log)
 
