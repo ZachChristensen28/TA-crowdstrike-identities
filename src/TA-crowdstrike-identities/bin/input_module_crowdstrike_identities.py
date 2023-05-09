@@ -4,6 +4,7 @@
 from falconpy import IdentityProtection
 from crowdstrike_identities_version import *
 import json
+import datetime
 from zts_helper import *
 
 def validate_input(helper, definition):
@@ -111,6 +112,7 @@ def collect_events(helper, ew):
     }
     """
 
+    start_time = datetime.datetime.now()
     response = falcon.api_preempt_proxy_post_graphql(query=idp_query, variables=None)
     status_code = response['status_code']
 
@@ -247,6 +249,9 @@ def collect_events(helper, ew):
         
         next_page_exists = page_info['hasNextPage']
 
+    end_time = datetime.datetime.now()
+    duration = end_time - start_time
+
     event_log = zts_logger(
         msg='Finished collection',
         action='success',
@@ -255,7 +260,8 @@ def collect_events(helper, ew):
         hostname=hostname,
         base_url=cloud_env,
         user_agent=user_agent,
-        identity_count=identity_count
+        identity_count=identity_count,
+        time_taken=duration
     )
     helper.log_info(event_log)
     exit(0)
