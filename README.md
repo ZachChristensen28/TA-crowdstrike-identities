@@ -4,7 +4,7 @@
 [![Docs](https://github.com/ZachChristensen28/TA-crowdstrike-identities/actions/workflows/docs.yml/badge.svg)](https://splunk-ta-crowdstrike.ztsplunker.com/)
 ![Appinspect](https://github.com/ZachChristensen28/TA-crowdstrike-identities/actions/workflows/appinspect.yml/badge.svg)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ZachChristensen28/TA-crowdstrike-identities)
-[![Splunkbase App](https://img.shields.io/badge/Splunkbase-TA--crowdstrike--identities-blue)](#placeholder)
+[![Splunkbase App](https://img.shields.io/badge/Splunkbase-TA--crowdstrike--identities-blue)](https://splunkbase.splunk.com/app/6893)
 ![Splunk Cloud Compatibility](https://img.shields.io/badge/Splunk%20Cloud%20Ready-Victoria%20|%20Classic-informational?logo=splunk)
 [![FalconPy](https://img.shields.io/badge/FalconPy-1.2.x-red?logo=crowdstrike)](https://falconpy.io/)
 
@@ -24,7 +24,7 @@ Full documentation can be found at [https://splunk-ta-crowdstrike.ztsplunker.com
 
  Info | Description
 ------|----------
-Version | 1.0.0 - See on [Splunkbase](#placeholder) \| [GitHub](https://github.com/ZachChristensen28/TA-crowdstrike-identities)
+Version | 1.0.0 - See on [Splunkbase](https://splunkbase.splunk.com/app/6893) \| [GitHub](https://github.com/ZachChristensen28/TA-crowdstrike-identities)
 Vendor Product | [CrowdStrike Falcon Identity Protection](https://www.crowdstrike.com/products/identity-protection/)
 Other | This add-on uses [FalconPy](https://falconpy.io/) to interact with the vendor's API.
 Add-on has a web UI | Yes, this add-on has a view to setup a modular input.
