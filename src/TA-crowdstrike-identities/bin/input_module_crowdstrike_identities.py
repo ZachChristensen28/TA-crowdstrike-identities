@@ -18,7 +18,7 @@ def collect_events(helper, ew):
     api_clientid = api_credentials['username']
     api_secret = api_credentials['password']
     cloud_env = helper.get_arg('cloud_environment')
-    user_agent = helper.get_arg('application_id')
+    user_agent = f'zTsSplunkTAFalconIdentities/{APP_VERSION}'
     stanza = str(helper.get_input_stanza_names())
     hostname = f'crowdstrike/{cloud_env}'
 
@@ -66,13 +66,13 @@ def collect_events(helper, ew):
         stanza=stanza,
         hostname=hostname,
         base_url=cloud_env,
-        user_agent=f'{user_agent}/{APP_VERSION}'
+        user_agent=user_agent
     )
     helper.log_info(event_log)
     falcon = IdentityProtection(client_id=api_clientid,
                                 client_secret=api_secret,
                                 base_url=cloud_env,
-                                user_agent=f'{user_agent}/{APP_VERSION}',
+                                user_agent=user_agent,
                                 ssl_verify=True,
                                 proxy=proxy_config
                                 )
@@ -81,7 +81,7 @@ def collect_events(helper, ew):
     query {
         entities(
         sortKey: PRIMARY_DISPLAY_NAME
-        sortOrder: DESCENDING
+        sortOrder: ASCENDING
         first: 1000) {
             nodes {
                 primaryDisplayName
@@ -125,7 +125,7 @@ def collect_events(helper, ew):
             http_status_code=status_code,
             error_message=json.dumps(error_msg),
             base_url=cloud_env,
-            user_agent=f'{user_agent}/{APP_VERSION}'
+            user_agent=user_agent
         )
         helper.log_error(event_log)
         exit(status_code)
@@ -137,20 +137,125 @@ def collect_events(helper, ew):
         stanza=stanza,
         hostname=hostname,
         base_url=cloud_env,
-        user_agent=f'{user_agent}/{APP_VERSION}'
+        user_agent=user_agent
     )
     helper.log_info(event_log)
 
     data = response["body"]["data"]["entities"]["nodes"]
     page_info = response["body"]["data"]["entities"]["pageInfo"]
 
+    identity_count = 0
     for account in data:
+        identity_count += 1
         splunk_event = helper.new_event(source=helper.get_input_type(), index=helper.get_output_index(
         ), sourcetype=helper.get_sourcetype(), data=json.dumps(account), host=hostname)
         ew.write_event(splunk_event)
 
-    # TODO: Finish Pagination
-    # next_page_exists = page_info['hasNextPage']
-    # while next_page_exists == "true":
-    #     continue
+    next_page_exists = page_info['hasNextPage']
+    page_count = 0
+    while next_page_exists:
+        page_count += 1
+        event_log = zts_logger(
+            msg='More pages exist',
+            action='success',
+            event_type=event_type,
+            stanza=stanza,
+            hostname=hostname,
+            base_url=cloud_env,
+            user_agent=user_agent,
+            page_count=page_count,
+            next_page_exists=next_page_exists
+        )
+        helper.log_info(event_log)
+
+        idp_query = """
+        query ($after: Cursor) {
+            entities(
+            sortKey: PRIMARY_DISPLAY_NAME
+            sortOrder: ASCENDING
+            first: 1000
+            after: $after) {
+                nodes {
+                    primaryDisplayName
+                    secondaryDisplayName
+                    riskScore
+                    riskScoreSeverity
+                    type
+                    roles { type }
+                    isProgrammatic: hasRole(type: ProgrammaticUserAccountRole) ... on UserEntity {
+                        emailAddresses
+                    }
+                    watched
+                    accounts { ... on ActiveDirectoryAccountDescriptor {
+                        domain
+                        samAccountName
+                        dn
+                        department
+                        ou
+                        }
+                    }
+                }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
+            }
+        }
+        """
+
+        variables = {
+            "after": page_info["endCursor"]
+        }
+
+        response = falcon.api_preempt_proxy_post_graphql(query=idp_query, variables=variables)
+        if status_code != 200:
+            error_msg = response["body"]["errors"]
+            event_log = zts_logger(
+                msg='Request failed',
+                action='failure',
+                event_type=event_type,
+                stanza=stanza,
+                hostname=hostname,
+                http_status_code=status_code,
+                error_message=json.dumps(error_msg),
+                base_url=cloud_env,
+                user_agent=user_agent
+            )
+            helper.log_error(event_log)
+            exit(status_code)
+
+        data = response["body"]["data"]["entities"]["nodes"]
+        page_info = response["body"]["data"]["entities"]["pageInfo"]
+
+        event_log = zts_logger(
+            msg='Request succeeded',
+            action='success',
+            event_type=event_type,
+            stanza=stanza,
+            hostname=hostname,
+            base_url=cloud_env,
+            user_agent=user_agent
+        )
+        helper.log_info(event_log)
+
+        for account in data:
+            identity_count += 1
+            splunk_event = helper.new_event(source=helper.get_input_type(), index=helper.get_output_index(
+            ), sourcetype=helper.get_sourcetype(), data=json.dumps(account), host=hostname)
+            ew.write_event(splunk_event)
+        
+        next_page_exists = page_info['hasNextPage']
+
+    event_log = zts_logger(
+        msg='Finished collection',
+        action='success',
+        event_type=event_type,
+        stanza=stanza,
+        hostname=hostname,
+        base_url=cloud_env,
+        user_agent=user_agent,
+        identity_count=identity_count
+    )
+    helper.log_info(event_log)
+    exit(0)
 
