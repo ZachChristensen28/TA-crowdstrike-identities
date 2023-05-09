@@ -24,7 +24,7 @@ Full documentation can be found at [https://splunk-ta-crowdstrike.ztsplunker.com
 
  Info | Description
 ------|----------
-Version | 0.0.1alpha - See on [Splunkbase](#placeholder) \| [GitHub](https://github.com/ZachChristensen28/TA-crowdstrike-identities)
+Version | 1.0.0 - See on [Splunkbase](#placeholder) \| [GitHub](https://github.com/ZachChristensen28/TA-crowdstrike-identities)
 Vendor Product | [CrowdStrike Falcon Identity Protection](https://www.crowdstrike.com/products/identity-protection/)
 Other | This add-on uses [FalconPy](https://falconpy.io/) to interact with the vendor's API.
 Add-on has a web UI | Yes, this add-on has a view to setup a modular input.
