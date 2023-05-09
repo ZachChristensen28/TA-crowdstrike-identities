@@ -83,6 +83,7 @@ def collect_events(helper, ew):
         entities(
         types: [USER]
         archived: false
+        learned: false
         sortKey: PRIMARY_DISPLAY_NAME
         sortOrder: ASCENDING
         first: 1000) {
@@ -145,6 +146,23 @@ def collect_events(helper, ew):
     )
     helper.log_info(event_log)
 
+    try:
+        response["body"]["data"]["entities"]["nodes"]
+        response["body"]["data"]["entities"]["pageInfo"]
+    except KeyError:
+        event_log = zts_logger(
+            msg='Unexpected Error',
+            action='failure',
+            event_type=event_type,
+            stanza=stanza,
+            hostname=hostname,
+            base_url=cloud_env,
+            user_agent=user_agent,
+            error_msg=json.dumps(response)
+        )
+        helper.log_error(event_log)
+        exit(1)
+
     data = response["body"]["data"]["entities"]["nodes"]
     page_info = response["body"]["data"]["entities"]["pageInfo"]
 
@@ -181,6 +199,7 @@ def collect_events(helper, ew):
             entities(
             types: [USER]
             archived: false
+            learned: false
             sortKey: PRIMARY_DISPLAY_NAME
             sortOrder: ASCENDING
             first: 1000
@@ -234,6 +253,23 @@ def collect_events(helper, ew):
             helper.log_error(event_log)
             exit(status_code)
 
+        try:
+            response["body"]["data"]["entities"]["nodes"]
+            response["body"]["data"]["entities"]["pageInfo"]
+        except KeyError:
+            event_log = zts_logger(
+                msg='Unexpected Error',
+                action='failure',
+                event_type=event_type,
+                stanza=stanza,
+                hostname=hostname,
+                base_url=cloud_env,
+                user_agent=user_agent,
+                error_msg=json.dumps(response)
+            )
+            helper.log_error(event_log)
+            exit(1)
+
         data = response["body"]["data"]["entities"]["nodes"]
         page_info = response["body"]["data"]["entities"]["pageInfo"]
 
@@ -253,7 +289,7 @@ def collect_events(helper, ew):
             splunk_event = helper.new_event(source=helper.get_input_type(), index=helper.get_output_index(
             ), sourcetype=helper.get_sourcetype(), data=json.dumps(account), host=hostname)
             ew.write_event(splunk_event)
-        
+
         next_page_exists = page_info['hasNextPage']
 
     end_time = datetime.datetime.now()
