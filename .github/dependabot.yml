@@ -5,3 +5,12 @@ updates:
     directory: "/docs"
     schedule:
       interval: "weekly"
+      day: "sunday"
+      time: "09:00"
+  
+  - package-ecosystem: "pip"
+    directory: "/src/TA-crowdstrike-identities/lib"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "09:00"
