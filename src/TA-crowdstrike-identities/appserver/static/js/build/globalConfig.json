@@ -305,9 +305,9 @@
                             "label": "Interval",
                             "type": "text",
                             "required": true,
-                            "help": "Time interval of input in seconds, minimum 300s (5 minutes) or a valid cron schedule. Note: Data collection could take a few hours to complete.",
+                            "help": "Time interval of input in seconds, minimum 300s (5 minutes) or a valid cron schedule. Note: Data collection could take a few hours to complete. Once per day is recommended.",
                             "options": {
-                                "placeholder": "2 * * * *"
+                                "placeholder": "3 3 * * *"
                             },
                             "validators": [
                                 {
