@@ -54,35 +54,35 @@
                         },
                         {
                             "field": "username",
-                            "label": "Username",
+                            "label": "Client ID",
                             "type": "text",
                             "required": true,
-                            "help": "Enter the username for this account.",
+                            "help": "Enter the Client ID for this account.",
                             "options": {
-                                "placeholder": "Enter the username here"
+                                "placeholder": "Client ID"
                             },
                             "validators": [
                                 {
                                     "type": "string",
                                     "minLength": 1,
                                     "maxLength": 200,
-                                    "errorMsg": "Length of username should be between 1 and 200"
+                                    "errorMsg": "Length of Client ID should be between 1 and 200"
                                 }
                             ]
                         },
                         {
                             "field": "password",
-                            "label": "Password",
+                            "label": "Secret",
                             "type": "text",
                             "encrypted": true,
                             "required": true,
-                            "help": "Enter the password for this account.",
+                            "help": "Enter the Secret for this account.",
                             "validators": [
                                 {
                                     "type": "string",
                                     "minLength": 1,
                                     "maxLength": 8192,
-                                    "errorMsg": "Length of password should be between 1 and 8192"
+                                    "errorMsg": "Length of Secret should be between 1 and 8192"
                                 }
                             ]
                         }
@@ -308,12 +308,15 @@
                             "label": "Interval",
                             "type": "text",
                             "required": true,
-                            "help": "Time interval of input in seconds.",
+                            "help": "Time interval of input in seconds, minimum 300s (5 minutes) or a valid cron schedule.",
+                            "options": {
+                                "placeholder": "2 * * * *"
+                            },
                             "validators": [
                                 {
                                     "type": "regex",
-                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$",
-                                    "errorMsg": "Interval must be an integer."
+                                    "pattern": "(?:(?:^[3-9][0-9][0-9]$|^[1-9][0-9][0-9][0-9]\\d*$)|(?:^\\S+(?: \\S+){4}))",
+                                    "errorMsg": "Interval must be an integer larger than 300 or a valid cron schedule."
                                 }
                             ]
                         },
