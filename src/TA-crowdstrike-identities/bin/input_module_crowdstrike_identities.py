@@ -157,6 +157,8 @@ def collect_events(helper, ew):
     page_count = 0
     while next_page_exists:
         page_count += 1
+        current_time = datetime.datetime.now()
+        current_duration = current_time - start_time
         event_log = zts_logger(
             msg='More pages exist',
             action='success',
@@ -167,7 +169,8 @@ def collect_events(helper, ew):
             user_agent=user_agent,
             page_count=page_count,
             next_page_exists=next_page_exists,
-            current_identity_count=identity_count
+            current_identity_count=identity_count,
+            time_taken = current_duration
         )
         helper.log_info(event_log)
 
