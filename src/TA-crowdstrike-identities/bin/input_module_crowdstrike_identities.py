@@ -81,6 +81,8 @@ def collect_events(helper, ew):
     idp_query = """
     query {
         entities(
+        types: [USER]
+        archived: false
         sortKey: PRIMARY_DISPLAY_NAME
         sortOrder: ASCENDING
         first: 1000) {
@@ -177,6 +179,8 @@ def collect_events(helper, ew):
         idp_query = """
         query ($after: Cursor) {
             entities(
+            types: [USER]
+            archived: false
             sortKey: PRIMARY_DISPLAY_NAME
             sortOrder: ASCENDING
             first: 1000
