@@ -46,17 +46,7 @@ fields = [
         encrypted=False,
         default=None,
         validator=None
-    ), 
-    field.RestField(
-        'application_id',
-        required=True,
-        encrypted=False,
-        default=None,
-        validator=validator.String(
-            min_len=0, 
-            max_len=8192, 
-        )
-    ), 
+    ),
 
     field.RestField(
         'disabled',
