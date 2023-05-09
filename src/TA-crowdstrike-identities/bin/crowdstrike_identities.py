@@ -54,10 +54,6 @@ class ModInputcrowdstrike_identities(modinput_wrapper.base_modinput.BaseModInput
                                          description="",
                                          required_on_create=True,
                                          required_on_edit=False))
-        scheme.add_argument(smi.Argument("application_id", title="Application ID",
-                                         description="Application IDs should be set to a unique value per CrowdStrike instance.",
-                                         required_on_create=True,
-                                         required_on_edit=False))
         return scheme
 
     def get_app_name(self):
