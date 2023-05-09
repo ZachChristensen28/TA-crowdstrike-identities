@@ -58,9 +58,6 @@
                             "type": "text",
                             "required": true,
                             "help": "Enter the Client ID for this account.",
-                            "options": {
-                                "placeholder": "Client ID"
-                            },
                             "validators": [
                                 {
                                     "type": "string",
