@@ -1,0 +1,53 @@
+name: Report a bug
+description: Something is not working? Report a bug
+labels:
+  - bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: >-
+        Please give a detailed description of the issue. Be as specific as
+        possible. If you have found a workaround or a fix for the problem,
+        please let us know. Include screenshots (if applicable).
+    validations:
+      required: true
+
+  - type: textarea
+    id: related-links
+    attributes:
+      label: Related links
+      description: >-
+        Please list all links to the sections of
+        [the documentation](https://splunk-ta-crowdstrike.ztsplunker.com/) that
+        are relevant to the bug in order to show that you have consulted and
+        thoroughly read it. Additionally, list links to possibly related open
+        and closed [issues](https://github.com/ZachChristensen28/TA-crowdstrike-identities/issues).
+      value: |-
+        - [Example Issue](https://splunk-ta-crowdstrike.ztsplunker.com/)
+        -
+    validations:
+      required: true
+
+  - type: textarea
+    id: ta-version
+    attributes:
+      label: TA-crowdstrike-identities Version
+      description: >-
+        Which version of this app (TA-crowdstrike-identities) are you using?
+      placeholder: |-
+        1.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: splunk-version
+    attributes:
+      label: Splunk Version
+      description: >-
+        Which version of Splunk are you using?
+      placeholder: |-
+        9.0.1
+    validations:
+      required: true
