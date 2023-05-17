@@ -121,12 +121,12 @@ nav:
       - 1 - Create API Token: quickstart/api-token.md
       - 2 - Install: quickstart/install.md
       - 3 - Configure Input: quickstart/input.md
+  - Troubleshoot:
+      - troubleshoot/index.md
   - Reference:
+      - TODO: reference/todo.md
       - Changelog:
           - Release Notes: reference/releases/index.md
           # - Release History: reference/releases/release-history.md
       - Third-party software:
           - Credits: reference/credits.md
-  #     - All Configurations: reference/all-configurations.md
-  # - Troubleshooting:
-  #     - troubleshooting/index.md
