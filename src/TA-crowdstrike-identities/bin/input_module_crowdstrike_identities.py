@@ -112,6 +112,7 @@ def collect_events(helper, ew):
             learned: false
             first: 10
             after: $after
+            lastUpdateEndTime: $lastUpdate
         ) {
             nodes {
                 entityId
@@ -170,7 +171,7 @@ def collect_events(helper, ew):
 
     get_data = True
     returned_identities = []
-    query_vars = {}
+    query_vars = {"lastUpdate": get_after_time} if get_after_time else {}
     page_count = 0
     start_time = time()
     while get_data:
