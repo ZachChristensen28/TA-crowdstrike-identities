@@ -22,6 +22,8 @@ def collect_events(helper, ew):
     api_clientid = api_credentials['username']
     api_secret = api_credentials['password']
     cloud_env = helper.get_arg('cloud_environment')
+    domains_to_exclude = helper.get_arg('domains_to_exclude')
+    domains_to_include = helper.get_arg('domains_to_include')
     user_agent = f'zTsSplunkTAFalconIdentities/{APP_VERSION}'
     stanza = str(helper.get_input_stanza_names())
     hostname = f'crowdstrike/{cloud_env}'
@@ -86,7 +88,8 @@ def collect_events(helper, ew):
         helper.log_info(event_log)
 
     idp_query = """
-    query ($after: Cursor, $lastUpdate: DateTimeInput, $first: Int) {
+    query ($after: Cursor, $lastUpdate: DateTimeInput, $first: Int, $domain_exclusions: [String!], $domains: [String!]) 
+    {
         entities(
             types: [USER]
             archived: false
@@ -94,6 +97,8 @@ def collect_events(helper, ew):
             first: $first
             after: $after
             lastUpdateEndTime: $lastUpdate
+            not: {domains: $domain_exclusions}
+            domains: $domains
         ) {
             nodes {
                 entityId
@@ -155,6 +160,12 @@ def collect_events(helper, ew):
     get_data = True
     query_vars = {"lastUpdate": get_after_time} if get_after_time else {}
     query_vars["first"] = 1000
+    if domains_to_exclude:
+        e = domains_to_exclude.replace(" ", "")
+        query_vars["domain_exclusions"] = e.split(",")
+    if domains_to_include:
+        i = domains_to_include.replace(" ", "")
+        query_vars["domains"] = i.split(",")
     page_count = 0
     start_time = time()
     identity_count = 0
@@ -168,8 +179,7 @@ def collect_events(helper, ew):
         hostname=hostname,
         base_url=cloud_env,
         user_agent=user_agent,
-        query_vars=json.dumps(query_vars),
-        pagination=query_vars["first"]
+        query_vars=json.dumps(query_vars)
     )
     helper.log_info(event_log)
 
