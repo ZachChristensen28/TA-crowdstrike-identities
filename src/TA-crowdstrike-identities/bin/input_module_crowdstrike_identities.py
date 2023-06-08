@@ -5,7 +5,6 @@ from falconpy import IdentityProtection
 from crowdstrike_identities_version import *
 import json
 from time import time
-from datetime import datetime
 from zts_helper import *
 
 
@@ -64,31 +63,8 @@ def collect_events(helper, ew):
         helper.log_info(event_log)
         proxy_config = None
 
-    event_type = "checkpointer"
-    get_after_time = None
-    if helper.get_check_point(stanza):
-        get_after_time = helper.get_check_point(stanza)
-        event_log = zts_logger(
-            msg='Checkpoint found',
-            action='success',
-            event_type=event_type,
-            stanza=stanza,
-            hostname=hostname,
-            checkpoint_value=helper.get_check_point(stanza)
-        )
-        helper.log_info(event_log)
-    else:
-        event_log = zts_logger(
-            msg='Checkpoint not found',
-            action='none',
-            event_type=event_type,
-            stanza=stanza,
-            hostname=hostname
-        )
-        helper.log_info(event_log)
-
     idp_query = """
-    query ($after: Cursor, $lastUpdate: DateTimeInput, $first: Int) 
+    query ($after: Cursor, $first: Int) 
     {
         entities(
             types: [USER]
@@ -96,7 +72,6 @@ def collect_events(helper, ew):
             learned: false
             first: $first
             after: $after
-            lastUpdateEndTime: $lastUpdate
             ~~~DOMAIN_FILTER~~~
         ) {
             nodes {
@@ -157,8 +132,7 @@ def collect_events(helper, ew):
     """
 
     get_data = True
-    query_vars = {"lastUpdate": get_after_time} if get_after_time else {}
-    query_vars["first"] = 1000
+    query_vars = {"first": 1000}
     if domains_to_include:
         domain_filter = f'including: {domains_to_include}'
         i = domains_to_include.replace(" ", "")
@@ -245,7 +219,6 @@ def collect_events(helper, ew):
             helper.log_info(event_log)
             raise SystemExit()
 
-    collection_end_time = f'{datetime.utcnow().isoformat(timespec="milliseconds")}Z'
     event_log = zts_logger(
         msg='Finished collection',
         action='success',
@@ -260,6 +233,5 @@ def collect_events(helper, ew):
     )
     helper.log_info(event_log)
 
-    helper.save_check_point(stanza, collection_end_time)
     raise SystemExit()
 
