@@ -54,6 +54,16 @@ class ModInputcrowdstrike_identities(modinput_wrapper.base_modinput.BaseModInput
                                          description="",
                                          required_on_create=True,
                                          required_on_edit=False))
+        scheme.add_argument(smi.Argument("domains_to_exclude", title="Domains to exclude (optional)",
+                                         description="Comma-separated list of domains to exclude. Default: No exclusion",
+                                         required_on_create=False,
+                                         required_on_edit=False))
+        scheme.add_argument(smi.Argument("domains_to_include", title="Domains to include (optional)",
+                                         description="Comma-separated list of domains to include. "
+                                                     "This setting will override the domains to exclude. "
+                                                     "Default: Include all domains.",
+                                         required_on_create=False,
+                                         required_on_edit=False))
         return scheme
 
     def get_app_name(self):
