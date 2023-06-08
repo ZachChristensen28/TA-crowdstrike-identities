@@ -47,6 +47,26 @@ fields = [
         default=None,
         validator=None
     ),
+    field.RestField(
+        'domains_to_exclude',
+        required=False,
+        encrypted=False,
+        default=None,
+        validator=validator.String(
+            min_len=0,
+            max_len=8192,
+        )
+    ),
+    field.RestField(
+        'domains_to_include',
+        required=False,
+        encrypted=False,
+        default=None,
+        validator=validator.String(
+            min_len=0,
+            max_len=8192,
+        )
+    ),
 
     field.RestField(
         'disabled',
