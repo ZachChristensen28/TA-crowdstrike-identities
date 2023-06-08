@@ -88,7 +88,7 @@ def collect_events(helper, ew):
         helper.log_info(event_log)
 
     idp_query = """
-    query ($after: Cursor, $lastUpdate: DateTimeInput, $first: Int, $domain_exclusions: [String!], $domains: [String!]) 
+    query ($after: Cursor, $lastUpdate: DateTimeInput, $first: Int) 
     {
         entities(
             types: [USER]
@@ -97,8 +97,7 @@ def collect_events(helper, ew):
             first: $first
             after: $after
             lastUpdateEndTime: $lastUpdate
-            not: {domains: $domain_exclusions}
-            domains: $domains
+            ~~~DOMAIN_FILTER~~~
         ) {
             nodes {
                 entityId
@@ -160,12 +159,17 @@ def collect_events(helper, ew):
     get_data = True
     query_vars = {"lastUpdate": get_after_time} if get_after_time else {}
     query_vars["first"] = 1000
-    if domains_to_exclude:
-        e = domains_to_exclude.replace(" ", "")
-        query_vars["domain_exclusions"] = e.split(",")
     if domains_to_include:
+        domain_filter = f'including: {domains_to_include}'
         i = domains_to_include.replace(" ", "")
-        query_vars["domains"] = i.split(",")
+        idp_query = idp_query.replace("~~~DOMAIN_FILTER~~~", f'domains: {json.dumps(i.split(","))}')
+    elif domains_to_exclude:
+        domain_filter = f'excluding: {domains_to_exclude}'
+        e = domains_to_exclude.replace(" ", "")
+        idp_query = idp_query.replace("~~~DOMAIN_FILTER~~~", f'not: {{domains: {json.dumps(e.split(","))}}}')
+    else:
+        domain_filter = None
+        idp_query = idp_query.replace("~~~DOMAIN_FILTER~~~", "")
     page_count = 0
     start_time = time()
     identity_count = 0
@@ -179,7 +183,8 @@ def collect_events(helper, ew):
         hostname=hostname,
         base_url=cloud_env,
         user_agent=user_agent,
-        query_vars=json.dumps(query_vars)
+        query_vars=json.dumps(query_vars),
+        domain_filter=domain_filter
     )
     helper.log_info(event_log)
 
