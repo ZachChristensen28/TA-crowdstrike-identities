@@ -85,43 +85,23 @@ def collect_events(helper, ew):
         )
         helper.log_info(event_log)
 
-    event_type = 'api_call'
-    event_log = zts_logger(
-        msg='Sending request',
-        action='started',
-        event_type=event_type,
-        stanza=stanza,
-        hostname=hostname,
-        base_url=cloud_env,
-        user_agent=user_agent
-    )
-    helper.log_info(event_log)
-    falcon = IdentityProtection(client_id=api_clientid,
-                                client_secret=api_secret,
-                                base_url=cloud_env,
-                                user_agent=user_agent,
-                                ssl_verify=True,
-                                proxy=proxy_config
-                                )
-
     idp_query = """
-    query ($after: Cursor) {
+    query ($after: Cursor, $lastUpdate: DateTimeInput, $first: Int) {
         entities(
             types: [USER]
             archived: false
             learned: false
-            first: 10
+            first: $first
             after: $after
             lastUpdateEndTime: $lastUpdate
         ) {
             nodes {
                 entityId
                 learned
-                accounts
                 archived
-                associations
                 primaryDisplayName
                 secondaryDisplayName
+                markTime
                 type
                 watched
                 isHuman: hasRole(type: HumanUserAccountRole)
@@ -141,6 +121,8 @@ def collect_events(helper, ew):
                 }
                 accounts { 
                     description
+                    dataSource
+                    creationTime
                     ... on ActiveDirectoryAccountDescriptor {
                         passwordAttributes {
                             lastChange
@@ -158,6 +140,7 @@ def collect_events(helper, ew):
                         title
                         userAccountControl
                         objectGuid
+                        lastUpdateTime
                     }
                 }
             }
@@ -170,10 +153,34 @@ def collect_events(helper, ew):
     """
 
     get_data = True
-    returned_identities = []
     query_vars = {"lastUpdate": get_after_time} if get_after_time else {}
+    query_vars["first"] = 1000
     page_count = 0
     start_time = time()
+    identity_count = 0
+
+    event_type = 'api_call'
+    event_log = zts_logger(
+        msg='Sending request',
+        action='started',
+        event_type=event_type,
+        stanza=stanza,
+        hostname=hostname,
+        base_url=cloud_env,
+        user_agent=user_agent,
+        query_vars=json.dumps(query_vars),
+        pagination=query_vars["first"]
+    )
+    helper.log_info(event_log)
+
+    falcon = IdentityProtection(client_id=api_clientid,
+                                client_secret=api_secret,
+                                base_url=cloud_env,
+                                user_agent=user_agent,
+                                ssl_verify=True,
+                                proxy=proxy_config
+                                )
+
     while get_data:
         page_count += 1
         response = falcon.graphql(query=idp_query, variables=query_vars)
@@ -196,8 +203,16 @@ def collect_events(helper, ew):
 
         if response["body"]["data"].get("entities"):
             if "nodes" in response["body"]["data"]["entities"]:
-                returned_identities.extend(response["body"]["data"]["entities"]["nodes"])
+                returned_identities = response["body"]["data"]["entities"]["nodes"]
                 page_info = response["body"]["data"]["entities"]["pageInfo"]
+
+                # Index Events
+                for identity in returned_identities:
+                    identity_count += 1
+                    splunk_event = helper.new_event(source=helper.get_input_type(), index=helper.get_output_index(
+                    ), sourcetype=helper.get_sourcetype(), data=json.dumps(identity), host=hostname)
+                    ew.write_event(splunk_event)
+
                 if page_info["hasNextPage"]:
                     query_vars["after"] = page_info["endCursor"]
                 else:
@@ -224,34 +239,9 @@ def collect_events(helper, ew):
         hostname=hostname,
         base_url=cloud_env,
         user_agent=user_agent,
-        time_taken_sec=time() - start_time
-    )
-    helper.log_info(event_log)
-
-    event_type = "event indexing"
-    event_log = zts_logger(
-        msg="Indexing events",
-        action="started",
-        event_type=event_type,
-        stanza=stanza,
-        hostname=hostname
-    )
-    helper.log_info(event_log)
-
-    identity_count = 0
-    for identity in returned_identities:
-        identity_count += 1
-        splunk_event = helper.new_event(source=helper.get_input_type(), index=helper.get_output_index(
-        ), sourcetype=helper.get_sourcetype(), data=json.dumps(identity), host=hostname)
-        ew.write_event(splunk_event)
-
-    event_log = zts_logger(
-        msg="Finished Indexing",
-        action='success',
-        event_type=event_type,
-        stanza=stanza,
-        hostname=hostname,
-        identity_count=identity_count
+        time_taken_sec=time() - start_time,
+        identity_count=identity_count,
+        page_count=page_count
     )
     helper.log_info(event_log)
 
