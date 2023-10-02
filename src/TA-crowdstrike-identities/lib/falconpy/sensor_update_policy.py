@@ -35,6 +35,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, Union
 from ._util import generate_error_result, args_to_params, force_default
 from ._util import handle_single_argument, process_service_request
 from ._payload import generic_payload_list, sensor_policy_payload
@@ -56,7 +57,7 @@ class SensorUpdatePolicy(ServiceClass):
     """
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def reveal_uninstall_token(self: object, body: dict = None, **kwargs) -> dict:
+    def reveal_uninstall_token(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Reveals an uninstall token for a specific device.
 
         To retrieve the bulk maintenance token pass the value
@@ -94,13 +95,14 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_combined_builds(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def query_combined_builds(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve available builds for use with Sensor Update Policies.
 
         Keyword arguments:
         platform -- The platform to return builds for. String.
-                    Allowed values: "linux", "mac", "windows"
+                    Allowed values: "linux", "linuxarm64", "mac", "windows", "zlinux"
         parameters -- full parameters payload, not required if platform is provided as a keyword.
+        stage -- The stages to return builds for. String or list of strings.
 
         Arguments: When not specified, the first argument to this method is assumed to be
                    'platform'. All others are ignored.
@@ -122,7 +124,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_combined_kernels(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_combined_kernels(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve kernel compatibility info for Sensor Update Builds.
 
         Keyword arguments:
@@ -152,7 +154,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_combined_policy_members(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_combined_policy_members(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for members of a Sensor Update Policy by providing a FQL filter and paging detail.
 
         Returns a set of host details which match the filter criteria.
@@ -186,7 +188,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_combined_policies(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_combined_policies(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for Sensor Update Policies by providing an FQL filter and paging details.
 
         Returns a set of Sensor Update Policies which match the filter criteria.
@@ -223,7 +225,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_combined_policies_v2(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_combined_policies_v2(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for Sensor Update Policies by providing an FQL filter and paging details.
 
         Provides additional support for uninstall protection.
@@ -265,12 +267,12 @@ class SensorUpdatePolicy(ServiceClass):
                                 body: dict = None,
                                 parameters: dict = None,
                                 **kwargs
-                                ) -> dict:
+                                ) -> Dict[str, Union[int, dict]]:
         """Perform the specified action on the Sensor Update Policies specified in the request.
 
         Keyword arguments:
-        action_name -- action to perform: 'add-host-group', 'disable', 'enable',
-                       or 'remove-host-group'.
+        action_name -- action to perform: 'add-host-group', 'add-rule-group', 'disable', 'enable',
+                       'remove-rule-group' or 'remove-host-group'.
         action_parameters -- Action specific parameter options. List of dictionaries.
                              {
                                  "name": "string",
@@ -333,7 +335,7 @@ class SensorUpdatePolicy(ServiceClass):
         return returned
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def set_policies_precedence(self: object, body: dict = None, **kwargs) -> dict:
+    def set_policies_precedence(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Set the precedence of Sensor Update Policies based on the order of IDs in the request.
 
         The first ID specified will have the highest precedence and the last ID specified will have
@@ -374,7 +376,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_policies(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_policies(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve a set of Sensor Update Policies by specifying their IDs.
 
         Keyword arguments:
@@ -400,7 +402,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def create_policies(self: object, body: dict = None, **kwargs) -> dict:
+    def create_policies(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Create Sensor Update Policies by specifying details about the policy to create.
 
         Keyword arguments:
@@ -448,7 +450,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def delete_policies(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def delete_policies(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Delete a set of Sensor Update Policies by specifying their IDs.
 
         Keyword arguments:
@@ -475,7 +477,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def update_policies(self: object, body: dict = None, **kwargs) -> dict:
+    def update_policies(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Update Sensor Update Policies by specifying the ID of the policy and details to update.
 
         Keyword arguments:
@@ -523,7 +525,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_policies_v2(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_policies_v2(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve a set of Sensor Update Policies by specifying their IDs.
 
         Provides additional support for uninstall protection.
@@ -552,7 +554,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def create_policies_v2(self: object, body: dict = None, **kwargs) -> dict:
+    def create_policies_v2(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Create Sensor Update Policies by specifying details about the policy.
 
         Provides additional support for uninstall protection.
@@ -566,8 +568,28 @@ class SensorUpdatePolicy(ServiceClass):
                             "name": "string",
                             "platform_name": "Windows",
                             "settings": {
-                                    "build": "string",
-                                    "uninstall_protection": "ENABLED"
+                                "build": "string",
+                                "scheduler": {
+                                    "enabled": true,
+                                    "schedules": [
+                                        {
+                                            "days": [
+                                                0
+                                            ],
+                                            "end": "string",
+                                            "start": "string"
+                                        }
+                                    ],
+                                    "timezone": "string"
+                                },
+                                "show_early_adopter_builds": true,
+                                "uninstall_protection": "ENABLED",
+                                "variants": [
+                                    {
+                                        "build": "string",
+                                        "platform": "string"
+                                    }
+                                ]
                             }
                         }
                     ]
@@ -576,15 +598,38 @@ class SensorUpdatePolicy(ServiceClass):
         description -- Sensor Update Policy description. String.
         name -- Sensor Update Policy name. String.
         platform_name -- Name of the operating system platform. String.
+        scheduler -- Scheduler settings. Dictionary.
         settings -- Sensor update policy specific settings. Dictionary.
                     OVERRIDES the value of the "build" and "uninstall_protection"
                     keywords if provided.
                     {
                         "build": "string",
-                        "uninstall_protection": "ENABLED"
+                        "scheduler": {
+                            "enabled": true,
+                            "schedules": [
+                                {
+                                    "days": [
+                                        0
+                                    ],
+                                    "end": "string",
+                                    "start": "string"
+                                }
+                            ],
+                            "timezone": "string"
+                        },
+                        "show_early_adopter_builds": true,
+                        "uninstall_protection": "ENABLED",
+                        "variants": [
+                            {
+                                "build": "string",
+                                "platform": "string"
+                            }
+                        ]
                     }
+        show_early_adopter_builds -- Enable early adopter builds. Boolean.
         uninstall_protection -- Boolean indicating if uninstall protection should be enabled.
                                 String. Allowed values: "ENABLED", "DISABLED"
+        variants -- List of variants. List of dictionaries.
 
         This method only supports keywords for providing arguments.
 
@@ -607,7 +652,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def update_policies_v2(self: object, body: dict = None, **kwargs) -> dict:
+    def update_policies_v2(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Update Sensor Update Policies by specifying the ID of the policy and update details.
 
         Provides additional support for uninstall protection.
@@ -620,8 +665,28 @@ class SensorUpdatePolicy(ServiceClass):
                             "id": "string",
                             "name": "string",
                             "settings": {
-                                    "build": "string",
-                                    "uninstall_protection": "ENABLED"
+                                "build": "string",
+                                "scheduler": {
+                                    "enabled": true,
+                                    "schedules": [
+                                        {
+                                            "days": [
+                                                0
+                                            ],
+                                            "end": "string",
+                                            "start": "string"
+                                        }
+                                    ],
+                                    "timezone": "string"
+                                },
+                                "show_early_adopter_builds": true,
+                                "uninstall_protection": "ENABLED",
+                                "variants": [
+                                    {
+                                        "build": "string",
+                                        "platform": "string"
+                                    }
+                                ]
                             }
                         }
                     ]
@@ -630,14 +695,17 @@ class SensorUpdatePolicy(ServiceClass):
         description -- Sensor Update Policy description. String.
         id -- Sensor Update Policy ID to update. String.
         name -- Sensor Update Policy name. String.
+        scheduler -- Schedule settings. Dictionary.
         settings -- Sensor Update policy specific settings. Dictionary.
                     OVERRIDES the value of the "build" keyword if provided.
                     {
                         "build": "string",
                         "uninstall_protection": "ENABLED"
                     }
+        show_early_adopter_builds -- Display early adopter builds. Boolean.
         uninstall_protection -- Boolean indicating if uninstall protection should be enabled.
                                 String. Allowed values: "ENABLED", "DISABLED"
+        variants -- Allowed variants list. List of dictionaries.
 
         This method only supports keywords for providing arguments.
 
@@ -660,7 +728,11 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_kernels(self: object, distinct_field: str = "id", parameters: dict = None, **kwargs) -> dict:
+    def query_kernels(self: object,
+                      distinct_field: str = "id",
+                      parameters: dict = None,
+                      **kwargs
+                      ) -> Dict[str, Union[int, dict]]:
         """Retrieve kernel compatibility info for Sensor Update Builds.
 
         Keyword arguments:
@@ -693,7 +765,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_policy_members(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_policy_members(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for members of a Sensor Update Policy by providing a FQL filter and paging detail.
 
         Returns a set of Agent IDs which match the filter criteria.
@@ -727,7 +799,7 @@ class SensorUpdatePolicy(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_policies(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_policies(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for Sensor Update Policies by providing a FQL filter and paging details.
 
         Returns a set of Sensor Update Policy IDs which match the filter criteria.

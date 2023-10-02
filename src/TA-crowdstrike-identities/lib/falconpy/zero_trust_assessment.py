@@ -35,6 +35,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, Union
 from ._util import force_default, process_service_request, handle_single_argument
 from ._service_class import ServiceClass
 from ._endpoint._zero_trust_assessment import _zero_trust_assessment_endpoints as Endpoints
@@ -54,7 +55,7 @@ class ZeroTrustAssessment(ServiceClass):
     """
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_assessment(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_assessment(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get Zero Trust Assessment data for one or more hosts by providing agent IDs (AID).
 
         Keyword arguments:
@@ -80,8 +81,8 @@ class ZeroTrustAssessment(ServiceClass):
             params=handle_single_argument(args, parameters, "ids")
             )
 
-    def get_compliance(self: object) -> dict:
-        """Get the Zero Trust Assessment compliance report for one customer ID (CID).
+    def get_audit(self: object) -> Dict[str, Union[int, dict]]:
+        """Get the Zero Trust Assessment audit report for one customer ID (CID).
 
         This method does not accept arguments.
 
@@ -90,19 +91,95 @@ class ZeroTrustAssessment(ServiceClass):
         HTTP Method: GET
 
         Swagger URL
-        https://assets.falcon.crowdstrike.com/support/api/swagger.html#/zero-trust-assessment/getComplianceV1
+        https://assets.falcon.crowdstrike.com/support/api/swagger.html#/zero-trust-assessment/getAuditV1
         """
         return process_service_request(
             calling_object=self,
             endpoints=Endpoints,
-            operation_id="getComplianceV1"
+            operation_id="getAuditV1"
+            )
+
+    @force_default(defaults=["parameters"], default_types=["dict"])
+    def get_assessments_by_score(self: object, parameters: dict = None, **kwargs) -> dict:
+        """Get Zero Trust Assessment data for one or more hosts by providing a customer ID (CID) and a range of scores.
+
+        Keyword arguments:
+        after - Pagination token used with the limit parameter to manage pagination of results.
+                On your first request, do not provide an after token. On subsequent requests,
+                provide the after token from the previous response to continue from that place
+                in the resultset. String.
+        filter - FQL formatted query specifying the filter to apply to the search. String.
+        limit - The number of scores to return in this response. Integer.
+                Min: 1, Max: 1,000, Default: 100
+        parameters - Full parameters payload provided as a JSON dictionary.
+
+        This method only supports keywords for providing arguments.
+
+        Returns: dict object containing API response.
+
+        HTTP Method: GET
+
+        Swagger URL
+        https://assets.falcon.crowdstrike.com/support/api/swagger.html#/zero-trust-assessment/getAssessmentsByScoreV1
+        """
+        return process_service_request(
+            calling_object=self,
+            endpoints=Endpoints,
+            operation_id="getAssessmentsByScoreV1",
+            keywords=kwargs,
+            params=parameters
+            )
+
+    @force_default(defaults=["parameters"], default_types=["dict"])
+    def query_combined_assessments(self: object, parameters: dict = None, **kwargs) -> dict:
+        """Search for assessments in your environment by providing an FQL filter and paging details.
+
+        Returns a set of HostFinding entities which match the filter criteria.
+
+        Keyword arguments:
+        after - Pagination token used with the limit parameter to manage pagination of results.
+                On your first request, do not provide an after token. On subsequent requests,
+                provide the after token from the previous response to continue from that place
+                in the resultset. String.
+        facet -- Select various details blocks to be returned for each assessment entity.
+                 Supported values:
+                 host            finding.rule
+        filter - FQL formatted query specifying the filter to apply to the search. String.
+                 Wildcards are NOT supported.
+        limit - The number of scores to return in this response. Integer.
+                Min: 1, Max: 5,000, Default: 100
+        parameters - Full parameters payload provided as a JSON dictionary.
+        sort - Sort assessment by their properties.
+               Common sort options include:
+               created_timestamp|desc
+               updated_timestamp|asc
+
+        This method only supports keywords for providing arguments.
+
+        Returns: dict object containing API response.
+
+        HTTP Method: GET
+
+        Swagger URL
+        https://assets.falcon.crowdstrike.com/support/api/swagger.html#/zero-trust-assessment/getCombinedAssessmentsQuery
+        """
+        return process_service_request(
+            calling_object=self,
+            endpoints=Endpoints,
+            operation_id="getCombinedAssessmentsQuery",
+            keywords=kwargs,
+            params=parameters
             )
 
     # This method name aligns to the operation ID in the API but
     # does not conform to snake_case / PEP8 and is defined here for
     # backwards compatibility / ease of use purposes
     getAssessmentV1 = get_assessment
-    getComplianceV1 = get_compliance
+    getAuditV1 = get_audit
+    getComplianceV1 = get_audit
+    get_compliance = get_audit
+    getAssessmentsByScoreV1 = get_assessments_by_score
+    getCombinedAssessmentsQuery = query_combined_assessments
 
 
 # The legacy name for this class does not conform to PascalCase / PEP8

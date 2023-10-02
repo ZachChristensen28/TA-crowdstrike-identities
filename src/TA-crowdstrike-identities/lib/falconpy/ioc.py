@@ -35,6 +35,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, Union
 from ._util import force_default, process_service_request, handle_single_argument
 from ._payload import (
     aggregate_payload,
@@ -61,11 +62,12 @@ class IOC(ServiceClass):
     """
 
     @force_default(defaults=["body", "parameters"], default_types=["dict", "dict"])
-    def indicator_aggregate(self: object, parameters: dict = None, body: dict = None, **kwargs) -> dict:
+    def indicator_aggregate(self: object, parameters: dict = None, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get indicator aggregates as specified via json in request body.
 
         Keyword arguments:
         body -- full body payload, not required when using other keywords.
+                body -- full body payload, not required when using other keywords.
                 {
                     "date_ranges": [
                     {
@@ -73,9 +75,13 @@ class IOC(ServiceClass):
                         "to": "string"
                     }
                     ],
+                    "exclude": "string",
                     "field": "string",
                     "filter": "string",
+                    "from": 0,
+                    "include": "string",
                     "interval": "string",
+                    "max_doc_count": 0,
                     "min_doc_count": 0,
                     "missing": "string",
                     "name": "string",
@@ -94,13 +100,21 @@ class IOC(ServiceClass):
                     "time_zone": "string",
                     "type": "string"
                 }
-        date_ranges -- List of dictionaries.
-        field -- String.
-        filter -- FQL syntax. String.
-        from_parent -- The filter for returning either only indicators for the
-                       requested customer or its MSSP parents. Boolean.
+
+        date_ranges -- If peforming a date range query specify the from and to date ranges.
+                       These can be in common date formats like 2019-07-18 or now.
+                       List of dictionaries.
+        exclude -- Fields to exclude. String.
+        field -- Term you want to aggregate on. If doing a date_range query,
+                 this is the date field you want to apply the date ranges to. String.
+        filter -- Optional filter criteria in the form of an FQL query.
+                  For more information about FQL queries, see our FQL documentation in Falcon.
+                  String.
+        from -- Integer.
+        include -- Fields to include. String.
         interval -- String.
-        min_doc_count -- Minimum number of documents required to match. Integer.
+        max_doc_count -- Maximum number of documents. Integer.
+        min_doc_count -- Minimum number of documents. Integer.
         missing -- String.
         name -- Scan name. String.
         q -- FQL syntax. String.
@@ -133,7 +147,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def indicator_combined(self: object, parameters: dict = None, **kwargs) -> dict:
+    def indicator_combined(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get Combined for Indicators.
 
         Keyword arguments:
@@ -183,7 +197,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def action_get(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def action_get(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get Actions by IDs.
 
         Keyword arguments:
@@ -209,12 +223,13 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def get_indicators_report(self: object, body: dict = None, **kwargs) -> dict:
+    def get_indicators_report(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Launch an indicators report creation job.
 
         Keyword arguments:
         body -- full parameters payload, not required if using other keywords.
                 {
+                    "from_parent": true,
                     "report_format": "string",
                     "search": {
                         "filter": "string",
@@ -224,6 +239,7 @@ class IOC(ServiceClass):
                 }
         filter -- FQL formatted string specifying the search filter.
                   Overridden if 'search' keyword is provided.
+        from_parent -- Flag indicating if this indicator is defined in the parent. Boolean.
         query -- FQL formatted string specifying the search query.
                  Overridden if 'search' keyword is provided.
         report_format -- Format of the report. String.
@@ -257,7 +273,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def indicator_get(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def indicator_get(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get Indicators by IDs.
 
         Keyword arguments:
@@ -287,7 +303,7 @@ class IOC(ServiceClass):
                          body: dict = None,
                          parameters: dict = None,
                          **kwargs
-                         ) -> dict:
+                         ) -> Dict[str, Union[int, dict]]:
         """Create Indicators.
 
         Keyword arguments:
@@ -366,7 +382,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def indicator_delete(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def indicator_delete(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Delete Indicators by IDs.
 
         Keyword arguments:
@@ -393,7 +409,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters", "body"], default_types=["dict", "dict"])
-    def indicator_update(self: object, body: dict, parameters: dict = None, **kwargs) -> dict:
+    def indicator_update(self: object, body: dict, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Update Indicators.
 
         Keyword arguments:
@@ -407,6 +423,7 @@ class IOC(ServiceClass):
                         "description": "string",
                         "expiration": "2021-10-22T11:03:16.123Z",
                         "filter": "string",
+                        "from_parent": true,
                         "host_groups": [
                             "string"
                         ],
@@ -451,6 +468,7 @@ class IOC(ServiceClass):
         description -- Description for the IOC. String.
         expiration -- UTC formatted date string. String.
         filename -- Filename to use in the metadata dictionary. String.
+        from_parent -- Flag indicating if this indicator originates from the parent. Boolean.
         host_groups -- List of host groups to apply this IOC to. List of strings.
         id -- ID of the indicator to be updated. At least one ID must be specified using this
               keyword, or as part of the indicators list using the indicators keyword.
@@ -493,7 +511,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def action_query(self: object, parameters: dict = None, **kwargs) -> dict:
+    def action_query(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Query Actions.
 
         Keyword arguments:
@@ -519,7 +537,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def indicator_search(self: object, parameters: dict = None, **kwargs) -> dict:
+    def indicator_search(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for Indicators.
 
         Keyword arguments:
@@ -529,6 +547,8 @@ class IOC(ServiceClass):
                  in the results. To access more than 10k indicators, use the `after` parameter
                  instead of `offset`.
         filter -- The filter expression that should be used to limit the results. FQL syntax.
+        from_parent -- The filter for returning either only indicators for the request customer
+                       or its MSSP parents. String.
         limit -- The maximum records to return. [1-500]. Defaults to 100.
                  Use with the offset parameter to manage pagination of results.
         offset -- The offset to start retrieving records from.
@@ -567,7 +587,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def ioc_type_query(self: object, parameters: dict = None, **kwargs) -> dict:
+    def ioc_type_query(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Query IOC types.
 
         Keyword arguments:
@@ -593,7 +613,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def platform_query(self: object, parameters: dict = None, **kwargs) -> dict:
+    def platform_query(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Query platforms.
 
         Keyword arguments:
@@ -619,7 +639,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def severity_query(self: object, parameters: dict = None, **kwargs) -> dict:
+    def severity_query(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Query severities.
 
         Keyword arguments:
@@ -646,7 +666,7 @@ class IOC(ServiceClass):
 
     # These methods are ported from the legacy IOCS Service Class, as they have not been deprecated
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def devices_count(self: object, parameters: dict = None, **kwargs) -> dict:
+    def devices_count(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Return the number of hosts in your customer account that have observed a given custom IOC.
 
         Keyword arguments:
@@ -678,7 +698,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def devices_ran_on(self: object, parameters: dict = None, **kwargs) -> dict:
+    def devices_ran_on(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Find hosts that have observed a given custom IOC.
 
         For details about those hosts, use the hosts API interface.
@@ -716,7 +736,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def processes_ran_on(self: object, parameters: dict = None, **kwargs) -> dict:
+    def processes_ran_on(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for processes associated with a custom IOC.
 
         Keyword arguments:
@@ -755,7 +775,7 @@ class IOC(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def entities_processes(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def entities_processes(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """For the provided ProcessID retrieve the process details.
 
         Keyword arguments:

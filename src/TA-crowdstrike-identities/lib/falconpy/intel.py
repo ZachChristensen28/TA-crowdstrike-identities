@@ -35,6 +35,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, Union
 from ._util import force_default, process_service_request, handle_single_argument
 from ._payload import generic_payload_list
 from ._service_class import ServiceClass
@@ -55,7 +56,7 @@ class Intel(ServiceClass):
     """
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_actor_entities(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_actor_entities(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get info about actors that match provided FQL filters.
 
         Keyword arguments:
@@ -107,7 +108,7 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_indicator_entities(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_indicator_entities(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get info about indicators that match provided FQL filters.
 
         Keyword arguments:
@@ -154,7 +155,7 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_report_entities(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_report_entities(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get info about reports that match provided FQL filters.
 
         Keyword arguments:
@@ -206,7 +207,7 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_actor_entities(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_actor_entities(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve specific actors using their actor IDs.
 
         Keyword arguments:
@@ -235,7 +236,7 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def get_indicator_entities(self: object, *args, body: dict = None, **kwargs) -> dict:
+    def get_indicator_entities(self: object, *args, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve specific indicators using their indicator IDs.
 
         Keyword arguments:
@@ -273,7 +274,7 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_mitre_report(self: object, parameters: dict = None, **kwargs) -> dict:
+    def get_mitre_report(self: object, parameters: dict = None, **kwargs) -> Union[Dict[str, Union[int, dict]], bytes]:
         """Export Mitre ATT&CK information for a given actor.
 
         Keyword arguments:
@@ -299,7 +300,7 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def mitre_attacks(self: object, *args, body: dict = None, **kwargs) -> dict:
+    def mitre_attacks(self: object, *args, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve reports and observable IDs associated with the given actor and attacks.
 
         Keyword arguments:
@@ -342,9 +343,11 @@ class Intel(ServiceClass):
 
         Keyword arguments:
         id -- One or more actor IDs. String or list of strings.
+        ids -- The ID of the report you want to download as a PDF.
+               This parameter is used only if no id parameter given. String.
         parameters - full parameters payload, not required if id is provided as a keyword.
 
-        Arguments: When not specified, the first argument to this method is assumed to be 'id'.
+        Arguments: When not specified, the first argument to this method is assumed to be 'ids'.
                    All others are ignored.
 
         Returns: binary object on SUCCESS, dict object containing API response on FAILURE.
@@ -359,11 +362,11 @@ class Intel(ServiceClass):
             endpoints=Endpoints,
             operation_id="GetIntelReportPDF",
             keywords=kwargs,
-            params=handle_single_argument(args, parameters, "id")
+            params=handle_single_argument(args, parameters, "ids")
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_report_entities(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_report_entities(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve specific reports using their report IDs.
 
         Keyword arguments:
@@ -423,6 +426,10 @@ class Intel(ServiceClass):
         """Download the latest rule set.
 
         Keyword arguments:
+        if_none_match -- Download the latest rule set only if it doesn't have an ETag
+                             matching the given ones. String.
+        if_modified_since -- Download the latest rule set only if the rule was modified after this date.
+                             http, ANSIC and RFC850 formats accepted. String.
         format -- Choose the format you want the rule set in. Either zip or gzip. Defaults to zip.
         parameters - full parameters payload, not required if other keywords are used.
         type -- The rule news report type. The following values are accepted:
@@ -441,16 +448,23 @@ class Intel(ServiceClass):
         Swagger URL
         https://assets.falcon.crowdstrike.com/support/api/swagger.html#/intel/GetLatestIntelRuleFile
         """
+        headers = {}
+        if kwargs.get("if_none_match", None):
+            headers["If-None-Match"] = kwargs.get("if_none_match")
+        if kwargs.get("if_modified_since", None):
+            headers["If-Modified-Since"] = kwargs.get("if_modified_since")
+
         return process_service_request(
             calling_object=self,
             endpoints=Endpoints,
             operation_id="GetLatestIntelRuleFile",
             keywords=kwargs,
+            headers=headers,
             params=handle_single_argument(args, parameters, "type")
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_rule_entities(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_rule_entities(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve details for rule sets for the specified ids.
 
         Keyword arguments:
@@ -476,7 +490,7 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_actor_ids(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_actor_ids(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get actor IDs that match provided FQL filters.
 
         Keyword arguments:
@@ -525,7 +539,7 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_indicator_ids(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_indicator_ids(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get indicators IDs that match provided FQL filters.
 
         Keyword arguments:
@@ -569,14 +583,16 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_mitre_attacks(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def query_mitre_attacks(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get MITRE tactics and techniques for the given actor.
 
         Keyword arguments:
         id -- Actor ID, derived from the actor name. (Example: fancy-bear) String.
+        ids -- The actor ID(derived from the actor's name) for which to retrieve a list of attacks.
+               Example: fancy-bear. Multiple values are allowed. List of strings.
         parameters - full parameters payload, not required if using `id` keyword.
 
-        Arguments: When not specified, the first argument to this method is assumed to be 'id'.
+        Arguments: When not specified, the first argument to this method is assumed to be 'ids'.
                    All others are ignored.
 
         Returns: dict object containing API response.
@@ -591,11 +607,11 @@ class Intel(ServiceClass):
             endpoints=Endpoints,
             operation_id="QueryMitreAttacks",
             keywords=kwargs,
-            params=handle_single_argument(args, parameters, "id")
+            params=handle_single_argument(args, parameters, "ids")
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_report_ids(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_report_ids(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get report IDs that match provided FQL filters.
 
         Keyword arguments:
@@ -644,7 +660,7 @@ class Intel(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_rule_ids(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_rule_ids(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for rule IDs that match provided filter criteria.
 
         Keyword arguments:

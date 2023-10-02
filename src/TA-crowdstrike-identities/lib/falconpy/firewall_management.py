@@ -36,6 +36,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 """
 # pylint: disable=C0302,R0904
+from typing import Dict, Union
 from ._util import force_default, process_service_request, handle_single_argument
 from ._payload import (
     aggregate_payload,
@@ -65,55 +66,64 @@ class FirewallManagement(ServiceClass):
     """
 
     @force_default(defaults=["body"], default_types=["list"])
-    def aggregate_events(self: object, body: list = None, **kwargs) -> dict:
+    def aggregate_events(self: object, body: list = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Aggregate events for customer.
 
         Keyword arguments:
         body -- full body payload, not required when using other keywords.
-                List of dictionaries.
-                [{
-                    "date_ranges": [
+                [
+                    {
+                        "date_ranges": [
                         {
                             "from": "string",
                             "to": "string"
                         }
-                    ],
-                    "field": "string",
-                    "filter": "string",
-                    "interval": "string",
-                    "min_doc_count": 0,
-                    "missing": "string",
-                    "name": "string",
-                    "q": "string",
-                    "ranges": [
+                        ],
+                        "exclude": "string",
+                        "field": "string",
+                        "filter": "string",
+                        "from": 0,
+                        "include": "string",
+                        "interval": "string",
+                        "max_doc_count": 0,
+                        "min_doc_count": 0,
+                        "missing": "string",
+                        "name": "string",
+                        "q": "string",
+                        "ranges": [
                         {
                             "From": 0,
                             "To": 0
                         }
-                    ],
-                    "size": 0,
-                    "sort": "string",
-                    "sub_aggregates": [
-                        null
-                    ],
-                    "time_zone": "string",
-                    "type": "string"
-                }]
+                        ],
+                        "size": 0,
+                        "sort": "string",
+                        "sub_aggregates": [
+                            null
+                        ],
+                        "time_zone": "string",
+                        "type": "string"
+                    }
+                ]
         date_ranges -- If peforming a date range query specify the from and to date ranges.
                        These can be in common date formats like 2019-07-18 or now.
                        List of dictionaries.
+        exclude -- Fields to exclude. String.
         field -- Term you want to aggregate on. If doing a date_range query,
                  this is the date field you want to apply the date ranges to. String.
         filter -- Optional filter criteria in the form of an FQL query.
                   For more information about FQL queries, see our FQL documentation in Falcon.
                   String.
+        from -- Integer.
+        include -- Fields to include. String.
         interval -- String.
-        min_doc_count -- Minimum number of documents required to match. Integer.
+        max_doc_count -- Maximum number of documents. Integer.
+        min_doc_count -- Minimum number of documents. Integer.
         missing -- String.
-        name -- Name of the aggregation. String.
+        name -- Scan name. String.
         q -- FQL syntax. String.
         ranges -- List of dictionaries.
-        size -- Size limit to apply to the queries. Integer.
+        size -- Integer.
         sort -- FQL syntax. String.
         sub_aggregates -- List of strings.
         time_zone -- String.
@@ -141,55 +151,64 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["list"])
-    def aggregate_policy_rules(self: object, body: list = None, **kwargs) -> dict:
+    def aggregate_policy_rules(self: object, body: list = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Aggregate rules within a policy for customer.
 
         Keyword arguments:
         body -- full body payload, not required when using other keywords.
-                List of dictionaries.
-                [{
-                    "date_ranges": [
+                [
+                    {
+                        "date_ranges": [
                         {
                             "from": "string",
                             "to": "string"
                         }
-                    ],
-                    "field": "string",
-                    "filter": "string",
-                    "interval": "string",
-                    "min_doc_count": 0,
-                    "missing": "string",
-                    "name": "string",
-                    "q": "string",
-                    "ranges": [
+                        ],
+                        "exclude": "string",
+                        "field": "string",
+                        "filter": "string",
+                        "from": 0,
+                        "include": "string",
+                        "interval": "string",
+                        "max_doc_count": 0,
+                        "min_doc_count": 0,
+                        "missing": "string",
+                        "name": "string",
+                        "q": "string",
+                        "ranges": [
                         {
                             "From": 0,
                             "To": 0
                         }
-                    ],
-                    "size": 0,
-                    "sort": "string",
-                    "sub_aggregates": [
-                        null
-                    ],
-                    "time_zone": "string",
-                    "type": "string"
-                }]
+                        ],
+                        "size": 0,
+                        "sort": "string",
+                        "sub_aggregates": [
+                            null
+                        ],
+                        "time_zone": "string",
+                        "type": "string"
+                    }
+                ]
         date_ranges -- If peforming a date range query specify the from and to date ranges.
                        These can be in common date formats like 2019-07-18 or now.
                        List of dictionaries.
+        exclude -- Fields to exclude. String.
         field -- Term you want to aggregate on. If doing a date_range query,
                  this is the date field you want to apply the date ranges to. String.
         filter -- Optional filter criteria in the form of an FQL query.
                   For more information about FQL queries, see our FQL documentation in Falcon.
                   String.
+        from -- Integer.
+        include -- Fields to include. String.
         interval -- String.
-        min_doc_count -- Minimum number of documents required to match. Integer.
+        max_doc_count -- Maximum number of documents. Integer.
+        min_doc_count -- Minimum number of documents. Integer.
         missing -- String.
-        name -- Name of the aggregation. String.
+        name -- Scan name. String.
         q -- FQL syntax. String.
         ranges -- List of dictionaries.
-        size -- Size limit to apply to the queries. Integer.
+        size -- Integer.
         sort -- FQL syntax. String.
         sub_aggregates -- List of strings.
         time_zone -- String.
@@ -217,55 +236,64 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["list"])
-    def aggregate_rule_groups(self: object, body: list = None, **kwargs) -> dict:
+    def aggregate_rule_groups(self: object, body: list = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Aggregate rule groups for customer.
 
         Keyword arguments:
         body -- full body payload, not required when using other keywords.
-                List of dictionaries.
-                [{
-                    "date_ranges": [
+                [
+                    {
+                        "date_ranges": [
                         {
                             "from": "string",
                             "to": "string"
                         }
-                    ],
-                    "field": "string",
-                    "filter": "string",
-                    "interval": "string",
-                    "min_doc_count": 0,
-                    "missing": "string",
-                    "name": "string",
-                    "q": "string",
-                    "ranges": [
+                        ],
+                        "exclude": "string",
+                        "field": "string",
+                        "filter": "string",
+                        "from": 0,
+                        "include": "string",
+                        "interval": "string",
+                        "max_doc_count": 0,
+                        "min_doc_count": 0,
+                        "missing": "string",
+                        "name": "string",
+                        "q": "string",
+                        "ranges": [
                         {
                             "From": 0,
                             "To": 0
                         }
-                    ],
-                    "size": 0,
-                    "sort": "string",
-                    "sub_aggregates": [
-                        null
-                    ],
-                    "time_zone": "string",
-                    "type": "string"
-                }]
+                        ],
+                        "size": 0,
+                        "sort": "string",
+                        "sub_aggregates": [
+                            null
+                        ],
+                        "time_zone": "string",
+                        "type": "string"
+                    }
+                ]
         date_ranges -- If peforming a date range query specify the from and to date ranges.
                        These can be in common date formats like 2019-07-18 or now.
                        List of dictionaries.
+        exclude -- Fields to exclude. String.
         field -- Term you want to aggregate on. If doing a date_range query,
                  this is the date field you want to apply the date ranges to. String.
         filter -- Optional filter criteria in the form of an FQL query.
                   For more information about FQL queries, see our FQL documentation in Falcon.
                   String.
+        from -- Integer.
+        include -- Fields to include. String.
         interval -- String.
-        min_doc_count -- Minimum number of documents required to match. Integer.
+        max_doc_count -- Maximum number of documents. Integer.
+        min_doc_count -- Minimum number of documents. Integer.
         missing -- String.
-        name -- Name of the aggregation. String.
+        name -- Scan name. String.
         q -- FQL syntax. String.
         ranges -- List of dictionaries.
-        size -- Size limit to apply to the queries. Integer.
+        size -- Integer.
         sort -- FQL syntax. String.
         sub_aggregates -- List of strings.
         time_zone -- String.
@@ -293,55 +321,64 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["list"])
-    def aggregate_rules(self: object, body: list = None, **kwargs) -> dict:
+    def aggregate_rules(self: object, body: list = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Aggregate rules for customer.
 
         Keyword arguments:
         body -- full body payload, not required when using other keywords.
-                List of dictionaries.
-                [{
-                    "date_ranges": [
+                [
+                    {
+                        "date_ranges": [
                         {
                             "from": "string",
                             "to": "string"
                         }
-                    ],
-                    "field": "string",
-                    "filter": "string",
-                    "interval": "string",
-                    "min_doc_count": 0,
-                    "missing": "string",
-                    "name": "string",
-                    "q": "string",
-                    "ranges": [
+                        ],
+                        "exclude": "string",
+                        "field": "string",
+                        "filter": "string",
+                        "from": 0,
+                        "include": "string",
+                        "interval": "string",
+                        "max_doc_count": 0,
+                        "min_doc_count": 0,
+                        "missing": "string",
+                        "name": "string",
+                        "q": "string",
+                        "ranges": [
                         {
                             "From": 0,
                             "To": 0
                         }
-                    ],
-                    "size": 0,
-                    "sort": "string",
-                    "sub_aggregates": [
-                        null
-                    ],
-                    "time_zone": "string",
-                    "type": "string"
-                }]
+                        ],
+                        "size": 0,
+                        "sort": "string",
+                        "sub_aggregates": [
+                            null
+                        ],
+                        "time_zone": "string",
+                        "type": "string"
+                    }
+                ]
         date_ranges -- If peforming a date range query specify the from and to date ranges.
                        These can be in common date formats like 2019-07-18 or now.
                        List of dictionaries.
+        exclude -- Fields to exclude. String.
         field -- Term you want to aggregate on. If doing a date_range query,
                  this is the date field you want to apply the date ranges to. String.
         filter -- Optional filter criteria in the form of an FQL query.
                   For more information about FQL queries, see our FQL documentation in Falcon.
                   String.
+        from -- Integer.
+        include -- Fields to include. String.
         interval -- String.
-        min_doc_count -- Minimum number of documents required to match. Integer.
+        max_doc_count -- Maximum number of documents. Integer.
+        min_doc_count -- Minimum number of documents. Integer.
         missing -- String.
-        name -- Name of the aggregation. String.
+        name -- Scan name. String.
         q -- FQL syntax. String.
         ranges -- List of dictionaries.
-        size -- Size limit to apply to the queries. Integer.
+        size -- Integer.
         sort -- FQL syntax. String.
         sub_aggregates -- List of strings.
         time_zone -- String.
@@ -369,7 +406,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_events(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_events(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get events entities by ID and optionally version.
 
         Keyword arguments:
@@ -395,7 +432,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_firewall_fields(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_firewall_fields(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get the firewall field specifications by ID.
 
         Keyword arguments:
@@ -573,7 +610,7 @@ class FirewallManagement(ServiceClass):
                         "enabled": true,
                         "require_encryption": true,
                         "ssids": [
-                            "string"
+                                "string"
                             ]
                         }
                     },
@@ -582,7 +619,7 @@ class FirewallManagement(ServiceClass):
                     ],
                     "description": "string",
                     "dhcp_servers": [
-                        "string"
+                            "string"
                         ],
                     "dns_resolution_targets": {
                         "targets": [
@@ -595,11 +632,11 @@ class FirewallManagement(ServiceClass):
                         ]
                     },
                     "dns_servers": [
-                        "string"
+                            "string"
                         ],
                     "enabled": true,
                     "host_addresses": [
-                        "string"
+                            "string"
                         ],
                     "https_reachable_hosts": {
                         "hostnames": [
@@ -608,7 +645,7 @@ class FirewallManagement(ServiceClass):
                     },
                     "icmp_request_targets": {
                         "targets": [
-                        "string"
+                            "string"
                         ]
                     },
                     "name": "string"
@@ -667,6 +704,8 @@ class FirewallManagement(ServiceClass):
                             ]
                         }
                     },
+                    "created_by": "string",
+                    "created_on": "string",
                     "default_gateways": [
                         "string"
                     ],
@@ -708,6 +747,8 @@ class FirewallManagement(ServiceClass):
                 }
         comment -- Audit log comment for this action. String.
         connection_types -- Connections available at the location. Dictionary.
+        created_on -- Timestamp string.
+        created_by -- String.
         default_gateways -- List of available default gateways. List of strings.
         description -- Description of the location. String.
         dhcp_servers -- List of available DHCP servers. List of strings.
@@ -760,6 +801,8 @@ class FirewallManagement(ServiceClass):
                             ]
                         }
                     },
+                    "created_by": "string",
+                    "created_on": "string",
                     "default_gateways": [
                         "string"
                     ],
@@ -801,6 +844,8 @@ class FirewallManagement(ServiceClass):
                 }
         comment -- Audit log comment for this action. String.
         connection_types -- Connections available at the location. Dictionary.
+        created_on -- Timestamp string.
+        created_by -- String.
         default_gateways -- List of available default gateways. List of strings.
         description -- Description of the location. String.
         dhcp_servers -- List of available DHCP servers. List of strings.
@@ -868,7 +913,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_platforms(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_platforms(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get platforms by ID, e.g., windows or mac or droid.
 
         Keyword arguments:
@@ -894,7 +939,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_policy_containers(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_policy_containers(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get policy container entities by policy ID.
 
         Keyword arguments:
@@ -924,7 +969,7 @@ class FirewallManagement(ServiceClass):
                                    body: dict = None,
                                    cs_username: str = None,  # pylint: disable=W0613  # deprecated
                                    **kwargs
-                                   ) -> dict:
+                                   ) -> Dict[str, Union[int, dict]]:
         """Update an identified policy container.
 
         **DEPRECATED**
@@ -936,6 +981,7 @@ class FirewallManagement(ServiceClass):
                     "default_outbound": "string",
                     "enforce": true,
                     "is_default_policy": true,
+                    "local_logging": true,
                     "platform_id": "string",
                     "policy_id": "string",
                     "rule_group_ids": [
@@ -948,6 +994,7 @@ class FirewallManagement(ServiceClass):
         default_outbound -- Default outbound. String.
         enforce -- Flag indicating if the policy is enforced. Boolean.
         is_default_policy -- Flag indicating if the policy is the default. Boolean.
+        local_logging -- Flag indicating if local logging should be enabled. Boolean.
         platform_id -- Platform ID. (`windows`, `mac`, `linux`) String.
         policy_id -- ID of the policy to be updated. String.
         rule_group_ids -- Rule group IDs this policy applies to. String or list of strings.
@@ -978,7 +1025,7 @@ class FirewallManagement(ServiceClass):
                                 body: dict,
                                 cs_username: str = None,  # pylint: disable=W0613  # deprecated
                                 **kwargs
-                                ) -> dict:
+                                ) -> Dict[str, Union[int, dict]]:
         """Update an identified policy container.
 
         Keyword arguments:
@@ -1028,7 +1075,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_rule_groups(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_rule_groups(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get rule group entities by ID.
 
         These groups do not contain their rule entites, just the rule IDs in precedence order.
@@ -1061,7 +1108,7 @@ class FirewallManagement(ServiceClass):
                           cs_username: str = None,  # pylint: disable=W0613  # cs_username is deprecated
                           parameters: dict = None,
                           **kwargs
-                          ) -> dict:
+                          ) -> Dict[str, Union[int, dict]]:
         """Create new rule group on a platform for a customer with a name and description.
 
         Returns the ID.
@@ -1075,6 +1122,7 @@ class FirewallManagement(ServiceClass):
                     "description": "string",
                     "enabled": true,
                     "name": "string",
+                    "platform": "string",
                     "rules": [
                         {
                             "action": "string",
@@ -1116,9 +1164,6 @@ class FirewallManagement(ServiceClass):
                                 "period_ms": "string"
                             },
                             "name": "string",
-                            "platform_ids": [
-                                "string"
-                            ],
                             "protocol": "string",
                             "remote_address": [
                                 {
@@ -1156,8 +1201,7 @@ class FirewallManagement(ServiceClass):
         name -- Rule group name. String.
         monitor -- Monitor count / period. Dictionary. Overridden if 'rules' keyword is provided.
         parameters - full parameters payload, not required if using other keywords.
-        platform_ids -- OS platform(s) covered by rule. Comma-delimited string or list of strings.
-                        Overridden if 'rules' keyword is provided.
+        platform -- OS platform covered by rule. String.
         protocol -- Integer protocol specified. Integer. Overridden if 'rules' keyword is provided.
                     (TCP = 6, UDP = 17)
         remote_address -- Remote address and netmask detail. Dictionary or list of dictionaries.
@@ -1210,9 +1254,6 @@ class FirewallManagement(ServiceClass):
                         "period_ms": "string"
                     },
                     "name": "string",
-                    "platform_ids": [
-                        "string"
-                    ],
                     "protocol": "string",
                     "remote_address": [
                         {
@@ -1258,7 +1299,7 @@ class FirewallManagement(ServiceClass):
                            cs_username: str = None,  # pylint: disable=W0613  # cs_username is deprecated
                            parameters: dict = None,
                            **kwargs
-                           ) -> dict:
+                           ) -> Dict[str, Union[int, dict]]:
         """Delete rule group entities by ID.
 
         Keyword arguments:
@@ -1289,7 +1330,7 @@ class FirewallManagement(ServiceClass):
                           cs_username: str = None,  # pylint: disable=W0613  # deprecated
                           parameters: dict = None,
                           **kwargs
-                          ) -> dict:
+                          ) -> Dict[str, Union[int, dict]]:
         """Update name, description, or enabled status of a rule group and underlying rules.
 
         Can also create, edit, delete, or reorder rules.
@@ -1349,7 +1390,11 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["body", "parameters"], default_types=["dict", "dict"])
-    def create_rule_group_validation(self: object, body: dict = None, parameters: dict = None, **kwargs) -> dict:
+    def create_rule_group_validation(self: object,
+                                     body: dict = None,
+                                     parameters: dict = None,
+                                     **kwargs
+                                     ) -> Dict[str, Union[int, dict]]:
         """Validate the request for creating a new rule group on a platform for a customer with a name and description.
 
         Keyword arguments:
@@ -1378,6 +1423,8 @@ class FirewallManagement(ServiceClass):
                             ]
                             }
                         ],
+                        "fqdn": "string",
+                        "fqdn_enabled": true,
                         "icmp": {
                             "icmp_code": "string",
                             "icmp_type": "string"
@@ -1456,7 +1503,7 @@ class FirewallManagement(ServiceClass):
                                      cs_username: str = None,  # pylint: disable=W0613  # deprecated
                                      parameters: dict = None,
                                      **kwargs
-                                     ) -> dict:
+                                     ) -> Dict[str, Union[int, dict]]:
         """Validate the request.
 
         Validates the request of updating name, description, or enabled status
@@ -1517,7 +1564,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_rules(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_rules(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get rule entities by ID or Family ID.
 
         ID = 64-bit unsigned int as decimal string
@@ -1546,7 +1593,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def validate_filepath_pattern(self: object, body: dict = None, **kwargs) -> dict:
+    def validate_filepath_pattern(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Validate that the test pattern matches the executable filepath glob pattern.
 
         Keyword arguments:
@@ -1579,7 +1626,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_events(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_events(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Find all event IDs matching the query with filter.
 
         Keyword arguments:
@@ -1621,7 +1668,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_firewall_fields(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_firewall_fields(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get the firewall field specification IDs for the provided platform.
 
         Keyword arguments:
@@ -1681,7 +1728,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_platforms(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_platforms(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get the list of platform names.
 
         Keyword arguments:
@@ -1707,7 +1754,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_policy_rules(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_policy_rules(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Find all firewall rule IDs matching the query with filter.
 
         Results are returned in precedence order.
@@ -1751,7 +1798,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_rule_groups(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_rule_groups(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Find all rule group IDs matching the query with filter.
 
         Keyword arguments:
@@ -1793,7 +1840,7 @@ class FirewallManagement(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_rules(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_rules(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Find all rule IDs matching the query with filter.
 
         Keyword arguments:

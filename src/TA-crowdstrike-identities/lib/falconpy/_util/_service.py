@@ -1,4 +1,4 @@
-"""Internal constant library.
+"""FalconPy Service Class helper methods.
 
  _______                        __ _______ __        __ __
 |   _   .----.-----.--.--.--.--|  |   _   |  |_.----|__|  |--.-----.
@@ -35,16 +35,35 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
-PREFER_NONETYPE = [
-    "report_executions_download_get", "report_executions_download.get",
-    "RTR_ListFiles", "RTR_ListFilesV2", "RTR_GetExtractedFileContents",
-    "RTR_DeleteSession"
-]
-PREFER_IDS_IN_BODY = [
-    "GetDeviceDetails", "PostDeviceDetailsV2", "GetVulnerabilities", "GetIntelIndicatorEntities",
-    "getChildrenV2", "cancel-scans", "GetDetectSummaries", "UpdateQuarantinedDetectsByIds",
-    "GetQuarantineFiles"
-]
-MOCK_OPERATIONS = [
-    "GetImageAssessmentReport", "DeleteImageDetails", "ImageMatchesPolicy"
-]
+from typing import Union
+
+
+def service_override_payload(caller: object,
+                             meth: str,
+                             rte: str,
+                             body_p: dict,
+                             param_p: dict,
+                             file_p: list,
+                             data_p: Union[dict, bytes],
+                             exp: bool
+                             ) -> dict:
+    """Create the necessary arguments for a direct call to process_request."""
+    return {
+        "method": meth,
+        "endpoint": f"{caller.base_url}{rte}",
+        "body": body_p,
+        "data": data_p,
+        "params": param_p,
+        "headers": caller.headers,
+        "files": file_p,
+        "verify": caller.ssl_verify,
+        "proxy": caller.proxy,
+        "timeout": caller.timeout,
+        "user_agent": caller.user_agent,
+        "expand_result": exp,
+        "container": False,     # Does not currently support container operations
+        "log_util": caller.log,
+        "debug_record_count": caller.debug_record_count,
+        "sanitize": caller.sanitize_log,
+        "pythonic": caller.pythonic
+    }

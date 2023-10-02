@@ -1,5 +1,13 @@
 """All-in-one CrowdStrike Falcon OAuth2 API harness.
 
+ @@@@@@@  @@@@@@@@ @@@@@@@  @@@@@@@  @@@@@@@@  @@@@@@@  @@@@@@  @@@@@@@ @@@@@@@@ @@@@@@@
+ @@!  @@@ @@!      @@!  @@@ @@!  @@@ @@!      !@@      @@!  @@@   @@!   @@!      @@!  @@@
+ @!@  !@! @!!!:!   @!@@!@!  @!@!!@!  @!!!:!   !@!      @!@!@!@!   @!!   @!!!:!   @!@  !@!
+ !!:  !!! !!:      !!:      !!: :!!  !!:      :!!      !!:  !!!   !!:   !!:      !!:  !!!
+ :: :  :  : :: :::  :        :   : : : :: :::  :: :: :  :   : :    :    : :: ::: :: :  :
+
+This class is deprecated! Developers should import APIHarnessV2 instead.
+
  _______                        __ _______ __        __ __
 |   _   .----.-----.--.--.--.--|  |   _   |  |_.----|__|  |--.-----.
 |.  1___|   _|  _  |  |  |  |  _  |   1___|   _|   _|  |    <|  -__|
@@ -36,8 +44,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 """
 import time
-from ._util import _ALLOWED_METHODS
-from ._util import (
+from logging import Logger, getLogger
+from .._util import (
+    _ALLOWED_METHODS,
     perform_request,
     generate_b64cred,
     generate_error_result,
@@ -46,15 +55,18 @@ from ._util import (
     return_preferred_default,
     autodiscover_region,
     )
-from ._base_url import BaseURL
-from ._container_base_url import ContainerBaseURL
-from ._uber_default_preference import PREFER_IDS_IN_BODY, MOCK_OPERATIONS
-from ._token_fail_reason import TokenFailReason
-from ._endpoint import api_endpoints
+from .._enum import BaseURL, ContainerBaseURL, TokenFailReason
+from .._constant import PREFER_IDS_IN_BODY, MOCK_OPERATIONS
+from .._endpoint import api_endpoints
+from .._log import LogFacility
 
 
 class APIHarness:
-    """This one does it all. It's like the One Ring with significantly fewer orcs."""
+    """This one does it all. It's like the One Ring with significantly fewer orcs.
+
+    This is the LEGACY version of the UBER CLASS and is DEPRECATED as of v1.3.0.
+    Developers should make use of the new Uber Class solution: APIHarnessV2.
+    """
 
     # pylint: disable=too-many-instance-attributes
     _token_fail_headers = {}  # Issue #578
@@ -69,7 +81,12 @@ class APIHarness:
                  proxy: dict = None,
                  timeout: float or tuple = None,
                  user_agent: str = None,
-                 renew_window: int = 120
+                 renew_window: int = 120,
+                 debug: bool = False,  # New functionality
+                 access_token: str = None,  # pylint: disable=W0613  # Not supported
+                 pythonic: bool = False,  # New functionality
+                 sanitize_log: bool = True,  # New functionality
+                 debug_record_count: int = None  # New functionality
                  ) -> object:
         """Uber class constructor.
 
@@ -115,6 +132,8 @@ class APIHarness:
             creds = {}
         self.creds = creds
         self.base_url = confirm_base_url(base_url)
+        self._pythonic = pythonic
+        self._debug = debug
         self.ssl_verify = ssl_verify
         self.proxy = proxy
         self.timeout = timeout
@@ -129,6 +148,19 @@ class APIHarness:
         self.user_agent = user_agent  # Issue #365
         # Maximum renewal window is 20 minutes, Minimum is 2 minutes
         self.token_renew_window = max(min(renew_window, 1200), 120)  # in seconds
+        self._log = None
+        self._debug_record_count = None
+        self._sanitize = None
+        if debug:
+            # Ignored when debugging is disabled.
+            self._debug_record_count: int = debug_record_count if debug_record_count else None
+            # Allow log sanitization to be overridden.
+            self._sanitize = sanitize_log if isinstance(sanitize_log, bool) else None
+            # Logging facility for all classes using this interface, defaults to disabled.
+            self._log: LogFacility = LogFacility(getLogger(__name__),
+                                                 debug_record_count,
+                                                 sanitize_log
+                                                 )
 
     def valid_cred_format(self: object) -> bool:
         """Confirm credential dictionary format.
@@ -169,7 +201,10 @@ class APIHarness:
                                  verify=self.ssl_verify,
                                  proxy=self.proxy,
                                  timeout=self.timeout,
-                                 user_agent=self.user_agent
+                                 user_agent=self.user_agent,
+                                 authenticating=True,
+                                 log_util=self.log,
+                                 pythonic=self.pythonic
                                  )
         if isinstance(result, dict):  # Issue #433
             self.token_status = result["status_code"]
@@ -186,7 +221,7 @@ class APIHarness:
                 if "errors" in result["body"]:
                     if result["body"]["errors"]:
                         self.token_fail_reason = result["body"]["errors"][0]["message"]
-        else:
+        else:  # pragma: no cover
             self.authenticated = False
             self.token_fail_reason = TokenFailReason["UNEXPECTED"].value
             self.token_status = 403
@@ -202,7 +237,8 @@ class APIHarness:
         revoked = False
         if perform_request(method="POST", endpoint=target, data=data_payload,
                            headers=header_payload, verify=self.ssl_verify,
-                           proxy=self.proxy, timeout=self.timeout, user_agent=self.user_agent
+                           proxy=self.proxy, timeout=self.timeout, user_agent=self.user_agent,
+                           log_util=self.log, pythonic=self.pythonic
                            )["status_code"] == 200:
             self.authenticated = False
             self.token = False
@@ -356,7 +392,9 @@ class APIHarness:
                                                timeout=self.timeout,
                                                user_agent=self.user_agent,
                                                expand_result=kwargs.get("expand_result", False),
-                                               container=container
+                                               container=container,
+                                               log_util=self.log,
+                                               pythonic=self.pythonic
                                                )
                 else:
                     # Bad HTTP method
@@ -374,3 +412,62 @@ class APIHarness:
             returned = generate_error_result(message="Invalid API operation specified.", code=418)
 
         return returned
+
+    @property
+    def token_value(self) -> str:
+        """Return the current token value."""
+        return self.token
+
+    @property
+    def log(self) -> Logger:
+        """Return the logger from our log facility."""
+        returned = None
+        if self.log_facility:
+            returned = self.log_facility.log
+        return returned
+
+    @property
+    def log_facility(self) -> LogFacility:
+        """Return the entire log facility."""
+        return self._log
+
+    @property
+    def debug(self) -> bool:
+        """Return a boolean if we are in a debug mode."""
+        return bool(self.log)
+
+    @property
+    def pythonic(self) -> bool:
+        """Return a boolean if we are in a pythonic mode."""
+        return self._pythonic
+
+    @pythonic.setter
+    def pythonic(self, value: bool):
+        """Enable or disable pythonic mode."""
+        self._pythonic = value
+
+    @property
+    def debug_record_count(self) -> int:
+        """Return the current debug record count setting."""
+        returned = 100
+        if self.log_facility:
+            returned = self.log_facility.debug_record_count
+        return returned
+
+    @debug_record_count.setter
+    def debug_record_count(self, value: int):
+        if self.log_facility:
+            self.log_facility.debug_record_count = value
+
+    @property
+    def sanitize_log(self) -> bool:
+        """Return the current log sanitization."""
+        returned = True
+        if self.log_facility:
+            returned = self.log_facility.sanitize_log
+        return returned
+
+    @sanitize_log.setter
+    def sanitize_log(self, value):
+        if self.log_facility:
+            self.log_facility.sanitize_log = value

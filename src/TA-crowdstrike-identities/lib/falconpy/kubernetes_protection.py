@@ -35,6 +35,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, Union
 from ._util import process_service_request, force_default, handle_single_argument
 from ._service_class import ServiceClass
 from ._endpoint._kubernetes_protection import _kubernetes_protection_endpoints as Endpoints
@@ -54,11 +55,12 @@ class KubernetesProtection(ServiceClass):
     """
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_aws_accounts(self: object, parameters: dict = None, **kwargs) -> dict:
+    def get_aws_accounts(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Provide a list of AWS accounts.
 
         Keyword arguments:
         ids -- AWS Account IDs. String or list of strings.
+        is_horizon_acct -- Filter by whether an account originates from Horizon or not. String.
         limit -- The maximum number of records to return in this response. [Integer, 1-500]
                  Use with the offset parameter to manage pagination of results.
         offset -- The offset to start retrieving records from. String.
@@ -84,7 +86,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def create_aws_account(self: object, body: dict = None, **kwargs) -> dict:
+    def create_aws_account(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Create a new AWS customer account in our system and generates the installation script.
 
         Keyword arguments:
@@ -125,7 +127,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def delete_aws_accounts(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def delete_aws_accounts(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Delete AWS accounts.
 
         Keyword arguments:
@@ -151,7 +153,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def update_aws_account(self: object, parameters: dict = None, **kwargs) -> dict:
+    def update_aws_account(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Update the AWS account per the query parameters provided.
 
         Keyword arguments:
@@ -177,7 +179,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def list_azure_accounts(self: object, parameters: dict = None, **kwargs) -> dict:
+    def list_azure_accounts(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Provide a list of registered Azure subscriptions.
 
         Keyword arguments:
@@ -209,7 +211,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def create_azure_subscription(self: object, body: dict = None, **kwargs) -> dict:
+    def create_azure_subscription(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Create a new Azure subscription.
 
         Keyword arguments:
@@ -250,7 +252,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def delete_azure_subscription(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def delete_azure_subscription(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Delete an Azure subscription.
 
         Keyword arguments:
@@ -276,7 +278,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_locations(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_locations(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Provide the cloud locations acknowledged by the Kubernetes Protection service.
 
         Keyword arguments:
@@ -433,11 +435,13 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_helm_values_yaml(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_helm_values_yaml(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Provide a sample Helm values.yaml file to install alongside the agent Helm chart.
 
         Keyword arguments:
         cluster_name -- Cloud provider. String.
+        is_self_managed_cluster -- Set to true if the cluster is not managed by a cloud provider, false if it is.
+                                   Boolean.
         parameters - full parameters payload, not required if using other keywords.
 
         Arguments: When not specified, the first argument to this method is assumed to be
@@ -459,7 +463,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def regenerate(self: object, body: dict = None) -> dict:
+    def regenerate(self: object, body: dict = None) -> Dict[str, Union[int, dict]]:
         """Regenerate API key for docker registry integrations.
 
         Keyword arguments:
@@ -482,7 +486,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_clusters(self: object, parameters: dict = None, **kwargs) -> dict:
+    def get_clusters(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Provide the clusters acknowledged by the Kubernetes Protection service.
 
         Keyword arguments:
@@ -493,6 +497,7 @@ class KubernetesProtection(ServiceClass):
         limit -- The maximum number of records to return in this response. [Integer, 1-500]
                  Use with the offset parameter to manage pagination of results.
         locations -- Cloud location. String or list of strings.
+        status -- Cluster status. 'Not Installed', 'Running', or 'Stopped'. String.
         offset -- The offset to start retrieving records from. String.
                   Use with the limit parameter to manage pagination of results.
         parameters - full parameters payload, not required if using other keywords.
@@ -520,7 +525,7 @@ class KubernetesProtection(ServiceClass):
                      body: dict = None,
                      parameters: dict = None,
                      **kwargs
-                     ) -> dict:
+                     ) -> Dict[str, Union[int, dict]]:
         """Trigger a dry run or a full scan of a customer's kubernetes footprint.
 
         Keyword arguments:
@@ -549,7 +554,7 @@ class KubernetesProtection(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def update_azure_service_principal(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def update_azure_service_principal(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Add the client ID for a given tenant ID to the subscription.
 
         Keyword arguments:

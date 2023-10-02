@@ -35,6 +35,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, Union
 from ._util import force_default, process_service_request
 from ._payload import generic_payload_list, incident_action_parameters
 from ._service_class import ServiceClass
@@ -55,7 +56,7 @@ class Incidents(ServiceClass):
     """
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def crowdscore(self: object, parameters: dict = None, **kwargs) -> dict:
+    def crowdscore(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Query environment wide CrowdScore and return the entity data.
 
         Keyword arguments:
@@ -85,7 +86,7 @@ class Incidents(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def get_behaviors(self: object, body: dict = None, **kwargs) -> dict:
+    def get_behaviors(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get details on behaviors by providing behavior IDs.
 
         Keyword arguments:
@@ -116,8 +117,12 @@ class Incidents(ServiceClass):
             body=body
             )
 
-    @force_default(defaults=["body"], default_types=["dict"])
-    def perform_incident_action(self: object, body: dict = None, **kwargs) -> dict:
+    @force_default(defaults=["body", "parameters"], default_types=["dict", "dict"])
+    def perform_incident_action(self: object,
+                                body: dict = None,
+                                parameters: dict = None,
+                                **kwargs
+                                ) -> Dict[str, Union[int, dict]]:
         """Perform a set of actions on one or more incidents.
 
         Such as: adding tags or updating the incident name or description.
@@ -126,14 +131,17 @@ class Incidents(ServiceClass):
 
         Keyword arguments:
         action_parameters -- Action specific parameters. List of dictionaries.
+        add_comment -- Adds the provided value as a new comment on all the incidents in the ids list. String.
         add_tag -- Adds the associated value as a new tag on all the incidents of the ids list.
                    Overridden if action_parameters is specified. Multiple values may be provided.
                    String, comma delimited string, or list.
         delete_tag -- Deletes tags matching the value from all the incidents in the ids list.
                       Overridden if action_parameters is specified. Multiple values may be provided.
                       String, comma delimited string or list.
+        overwrite_detects - Overwrite related detections. Boolean.
         unassign -- Unassigns all users from all of the incidents in the ids list.
                     Overridden if action_parameters is specified. Boolean.
+        update_detects -- Update related detections. Boolean.
         update_name -- Updates the name to the parameter value of all the incidents
                        in the ids list. Overridden if action_parameters is specified. String.
         update_assigned_to_v2 -- Assigns the user matching the UUID in the parameter
@@ -163,6 +171,7 @@ class Incidents(ServiceClass):
                     ]
                 }
         ids -- Incident ID(s) to perform actions against. String or list of strings.
+        parameters -- Full parameters payload, not required if using other keywords.
 
         This method only supports keywords for providing arguments.
 
@@ -186,11 +195,13 @@ class Incidents(ServiceClass):
             calling_object=self,
             endpoints=Endpoints,
             operation_id="PerformIncidentAction",
-            body=body
+            body=body,
+            params=parameters,
+            keywords=kwargs
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def get_incidents(self: object, body: dict = None, **kwargs) -> dict:
+    def get_incidents(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get details on incidents by providing incident IDs.
 
         Keyword arguments:
@@ -222,7 +233,7 @@ class Incidents(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_behaviors(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_behaviors(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for behaviors by providing an FQL filter, sorting, and paging details.
 
         Keyword arguments:
@@ -252,7 +263,7 @@ class Incidents(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_incidents(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_incidents(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for incidents by providing an FQL filter, sorting, and paging details.
 
         Keyword arguments:

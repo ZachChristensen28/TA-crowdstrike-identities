@@ -35,9 +35,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, List, Union, Any
 
 
-def aws_d4c_registration_payload(passed_keywords: dict) -> dict:
+def aws_d4c_registration_payload(passed_keywords: dict) -> Dict[str, List[Dict[str, Union[str, bool]]]]:
     """Create a properly formatted AWS registration payload.
 
     {
@@ -46,46 +47,85 @@ def aws_d4c_registration_payload(passed_keywords: dict) -> dict:
                 "account_id": "string",
                 "account_type": "string",
                 "cloudtrail_region": "string",
+                "iam_role_arn": "string",
                 "is_master": true,
                 "organization_id": "string"
             }
         ]
     }
     """
-    returned_payload = {}
+    returned_payload: Dict[str, List[Dict[str, Union[str, bool]]]] = {}
     returned_payload["resources"] = []
-    keys = ["account_id", "account_type", "cloudtrail_region", "organization_id"]
-    item = {}
+    keys = ["account_id", "account_type", "cloudtrail_region", "iam_role_arn", "organization_id"]
+    item: Dict[str, Any] = {}
+
     for key in keys:
-        if passed_keywords.get(key, None):
+        if isinstance(passed_keywords.get(key, None), str):
             item[key] = passed_keywords.get(key)
-    if passed_keywords.get("is_master", None) is not None:
+    if isinstance(passed_keywords.get("is_master", None), bool):
         item["is_master"] = passed_keywords.get("is_master")
 
-    returned_payload["resources"].append(item)
+    if item:
+        returned_payload["resources"].append(item)
 
     return returned_payload
 
 
-def azure_registration_payload(passed_keywords: dict) -> dict:
+def azure_registration_payload(passed_keywords: dict) -> Dict[str, List[Dict[str, str]]]:
     """Create a properly formatted Azure registration payload.
 
     {
         "resources": [
             {
+                "account_type": "string",
+                "client_id": "string",
+                "default_subscription": true,
                 "subscription_id": "string",
-                "tenant_id": "string"
+                "tenant_id": "string",
+                "years_valid": integer
             }
         ]
     }
     """
     returned_payload = {}
     returned_payload["resources"] = []
+    keys = ["account_type", "client_id", "subscription_id", "tenant_id"]
     item = {}
-    if passed_keywords.get("subscription_id", None):
-        item["subscription_id"] = passed_keywords.get("subscription_id", None)
-    if passed_keywords.get("tenant_id", None):
-        item["tenant_id"] = passed_keywords.get("tenant_id", None)
+    for key in keys:
+        if passed_keywords.get(key, None):
+            item[key] = passed_keywords.get(key, None)
+
+    if passed_keywords.get("default_subscription", None) is not None:
+        item["default_subscription"] = passed_keywords.get("default_subscription", None)
+
+    if passed_keywords.get("years_valid", -1) >= 0:
+        item["years_valid"] = passed_keywords.get("years_valid", -1)
+
+    returned_payload["resources"].append(item)
+
+    return returned_payload
+
+
+def gcp_registration_payload(passed_keywords: dict) -> dict:
+    """Create a properly formatted Azure registration payload.
+
+    {
+        "resources": [
+            {
+                "parent_id": "string",
+                "parent_type": "string"
+            }
+        ]
+    }
+    """
+    returned_payload: Dict[str, List[Dict[str, str]]] = {}
+    returned_payload["resources"] = []
+    keys = ["parent_id", "parent_type"]
+    item = {}
+    for key in keys:
+        if passed_keywords.get(key, None):
+            item[key] = passed_keywords.get(key, None)
+
     returned_payload["resources"].append(item)
 
     return returned_payload

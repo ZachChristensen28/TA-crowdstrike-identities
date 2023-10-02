@@ -19,8 +19,11 @@
                                                         |::.|     CrowdStrike Falcon      |::.|
                                                         `---' OAuth2 API SDK for Python 3 `---'
 """
+from typing import List, Any
 from .deprecated import _custom_ioa_deprecated
+from .deprecated import _d4c_registration_deprecated
 from .deprecated import _discover_deprecated
+from .deprecated import _fdr_deprecated
 from .deprecated import _firewall_management_deprecated
 from .deprecated import _hosts_deprecated
 from .deprecated import _identity_protection_deprecated
@@ -32,9 +35,11 @@ from .deprecated import _real_time_response_deprecated
 from .deprecated import _real_time_response_admin_deprecated
 from .deprecated import _report_executions_deprecated
 from .deprecated import _scheduled_reports_deprecated
+from .deprecated import _zero_trust_assessment_deprecated
 
 from ._alerts import _alerts_endpoints
 from ._cloud_connect_aws import _cloud_connect_aws_endpoints
+from ._cloud_snapshots import _cloud_snapshot_endpoints
 from ._cspm_registration import _cspm_registration_endpoints
 from ._custom_ioa import _custom_ioa_endpoints
 from ._d4c_registration import _d4c_registration_endpoints
@@ -85,9 +90,10 @@ from ._tailored_intelligence import _tailored_intelligence_endpoints
 from ._user_management import _user_management_endpoints
 from ._zero_trust_assessment import _zero_trust_assessment_endpoints
 
-api_endpoints = []
+api_endpoints: List[Any] = []
 api_endpoints.extend(_alerts_endpoints)
 api_endpoints.extend(_cloud_connect_aws_endpoints)
+api_endpoints.extend(_cloud_snapshot_endpoints)
 api_endpoints.extend(_cspm_registration_endpoints)
 api_endpoints.extend(_custom_ioa_endpoints)
 api_endpoints.extend(_d4c_registration_endpoints)
@@ -141,7 +147,9 @@ api_endpoints.extend(_zero_trust_assessment_endpoints)
 # Deprecated endpoints
 deprecated_endpoints = []
 deprecated_endpoints.extend(_custom_ioa_deprecated)
+deprecated_endpoints.extend(_d4c_registration_deprecated)
 deprecated_endpoints.extend(_discover_deprecated)
+deprecated_endpoints.extend(_fdr_deprecated)
 deprecated_endpoints.extend(_firewall_management_deprecated)
 deprecated_endpoints.extend(_hosts_deprecated)
 deprecated_endpoints.extend(_identity_protection_deprecated)
@@ -153,6 +161,7 @@ deprecated_endpoints.extend(_real_time_response_deprecated)
 deprecated_endpoints.extend(_real_time_response_admin_deprecated)
 deprecated_endpoints.extend(_report_executions_deprecated)
 deprecated_endpoints.extend(_scheduled_reports_deprecated)
+deprecated_endpoints.extend(_zero_trust_assessment_deprecated)
 
 # api_endpoints contains all endpoints, production and deprecated
 api_endpoints.extend(deprecated_endpoints)

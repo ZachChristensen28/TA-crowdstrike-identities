@@ -36,6 +36,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 """
 # pylint: disable=C0302,R0904
+from typing import Dict, Union
 from ._util import process_service_request, force_default, handle_single_argument
 from ._payload import (
     recon_rules_payload,
@@ -77,9 +78,13 @@ class Recon(ServiceClass):
                             "to": "string"
                         }
                         ],
+                        "exclude": "string",
                         "field": "string",
                         "filter": "string",
+                        "from": 0,
+                        "include": "string",
                         "interval": "string",
+                        "max_doc_count": 0,
                         "min_doc_count": 0,
                         "missing": "string",
                         "name": "string",
@@ -93,17 +98,26 @@ class Recon(ServiceClass):
                         "size": 0,
                         "sort": "string",
                         "sub_aggregates": [
-                        null
+                            null
                         ],
                         "time_zone": "string",
                         "type": "string"
                     }
                 ]
-        date_ranges -- List of dictionaries.
-        field -- String.
-        filter -- FQL syntax. String.
+        date_ranges -- If peforming a date range query specify the from and to date ranges.
+                       These can be in common date formats like 2019-07-18 or now.
+                       List of dictionaries.
+        exclude -- Fields to exclude. String.
+        field -- Term you want to aggregate on. If doing a date_range query,
+                 this is the date field you want to apply the date ranges to. String.
+        filter -- Optional filter criteria in the form of an FQL query.
+                  For more information about FQL queries, see our FQL documentation in Falcon.
+                  String.
+        from -- Integer.
+        include -- Fields to include. String.
         interval -- String.
-        min_doc_count -- Minimum number of documents required to match. Integer.
+        max_doc_count -- Maximum number of documents. Integer.
+        min_doc_count -- Minimum number of documents. Integer.
         missing -- String.
         name -- Scan name. String.
         q -- FQL syntax. String.
@@ -135,7 +149,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["list"])
-    def aggregate_notifications(self: object, body: list = None, **kwargs) -> dict:
+    def aggregate_notifications(self: object, body: list = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get notification aggregates as specified via JSON in request body.
 
         Keyword arguments:
@@ -148,9 +162,13 @@ class Recon(ServiceClass):
                             "to": "string"
                         }
                         ],
+                        "exclude": "string",
                         "field": "string",
                         "filter": "string",
+                        "from": 0,
+                        "include": "string",
                         "interval": "string",
+                        "max_doc_count": 0,
                         "min_doc_count": 0,
                         "missing": "string",
                         "name": "string",
@@ -164,17 +182,26 @@ class Recon(ServiceClass):
                         "size": 0,
                         "sort": "string",
                         "sub_aggregates": [
-                        null
+                            null
                         ],
                         "time_zone": "string",
                         "type": "string"
                     }
                 ]
-        date_ranges -- List of dictionaries.
-        field -- String.
-        filter -- FQL syntax. String.
+        date_ranges -- If peforming a date range query specify the from and to date ranges.
+                       These can be in common date formats like 2019-07-18 or now.
+                       List of dictionaries.
+        exclude -- Fields to exclude. String.
+        field -- Term you want to aggregate on. If doing a date_range query,
+                 this is the date field you want to apply the date ranges to. String.
+        filter -- Optional filter criteria in the form of an FQL query.
+                  For more information about FQL queries, see our FQL documentation in Falcon.
+                  String.
+        from -- Integer.
+        include -- Fields to include. String.
         interval -- String.
-        min_doc_count -- Minimum number of documents required to match. Integer.
+        max_doc_count -- Maximum number of documents. Integer.
+        min_doc_count -- Minimum number of documents. Integer.
         missing -- String.
         name -- Scan name. String.
         q -- FQL syntax. String.
@@ -206,7 +233,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def preview_rule(self: object, body: dict = None, **kwargs) -> dict:
+    def preview_rule(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get notification aggregates as specified via JSON in request body.
 
         Keyword arguments:
@@ -238,7 +265,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_actions(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_actions(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get actions based on their IDs. IDs can be retrieved using the GET query_actions.
 
         Keyword arguments:
@@ -264,7 +291,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def create_actions(self: object, body: dict = None, **kwargs) -> dict:
+    def create_actions(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Create actions for a monitoring rule.
 
         Accepts a list of actions that will be attached to the monitoring rule.
@@ -280,14 +307,17 @@ class Recon(ServiceClass):
                        ],
                        "type": "string"
                    }
+        content_format -- Content format. String.
         body -- full body payload, not required when using other keywords.
                 {
                     "actions": [
                         {
+                            "content_format": "string",
                             "frequency": "string",
                             "recipients": [
                                 "string"
                             ],
+                            "trigger_matchless": true,
                             "type": "string"
                         }
                     ],
@@ -298,6 +328,7 @@ class Recon(ServiceClass):
         recipients -- UUIDs of the recipients. List of strings. Used when
                       only one action is being handled.
         rule_id -- Rule ID to attach the action to. Always required.
+        trigger_matchless -- Trigger on no matches. Boolean.
         type -- Action type, used when only one action is being handled.
 
         This method only supports keywords for providing arguments.
@@ -320,7 +351,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def delete_action(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def delete_action(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Delete an action from a monitoring rule based on the action ID.
 
         Keyword arguments:
@@ -346,23 +377,27 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def update_action(self: object, body: dict = None, **kwargs) -> dict:
+    def update_action(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Update an action for a monitoring rule.
 
         Keyword arguments:
         body -- full body payload, not required when using other keywords.
                 {
+                    "content_format": "string",
                     "frequency": "string",
                     "id": "string",
                     "recipients": [
                         "string"
                     ],
-                    "status": "string"
+                    "status": "string",
+                    "trigger_matchless": "string"
                 }
+        content_format -- Content format. String.
         frequency - Frequency of the action. String.
         id -- Action ID. String.
         recipients -- UUIDs of the recipients. List of strings.
         status -- Action status. String.
+        trigger_matchless -- Trigger on no match. Boolean.
 
         This method only supports keywords for providing arguments.
 
@@ -518,7 +553,7 @@ class Recon(ServiceClass):
                                               *args,
                                               parameters: dict = None,
                                               **kwargs
-                                              ) -> dict:
+                                              ) -> Dict[str, Union[int, dict]]:
         """Get detailed notifications based on their IDs.
 
         These include the raw intelligence content that generated the match.
@@ -549,7 +584,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_notifications_detailed(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_notifications_detailed(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get detailed notifications based on their IDs.
 
         These include the raw intelligence content that generated the match.
@@ -607,7 +642,7 @@ class Recon(ServiceClass):
                                      *args,
                                      parameters: dict = None,
                                      **kwargs
-                                     ) -> dict:
+                                     ) -> Dict[str, Union[int, dict]]:
         """Get notifications based on their IDs.
 
         IDs can be retrieved using query_notifications.
@@ -637,7 +672,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_notifications(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_notifications(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get notifications based on their IDs.
 
         IDs can be retrieved using get_notifications.
@@ -665,7 +700,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def delete_notifications(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def delete_notifications(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Delete notifications based on IDs.
 
         Notifications cannot be recovered after they are deleted.
@@ -693,7 +728,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["list"])
-    def update_notifications(self: object, body: list = None, **kwargs) -> dict:
+    def update_notifications(self: object, body: list = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Update notification status or assignee. Accepts bulk requests.
 
         Keyword arguments:
@@ -731,7 +766,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_rules(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_rules(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get monitoring rules rules by provided IDs.
 
         Keyword arguments:
@@ -757,24 +792,28 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["list"])
-    def create_rules(self: object, body: list = None, **kwargs) -> dict:
+    def create_rules(self: object, body: list = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Create monitoring rules.
 
         Keyword arguments:
         body -- full body payload, not required when using other keywords.
                 [
                     {
+                        "breach_monitoring_enabled": true,
                         "filter": "string",
                         "name": "string",
                         "permissions": "string",
                         "priority": "string",
+                        "substring_matching_enabled": true,
                         "topic": "string"
                     }
                 ]
+        breach_monitoring_enabled -- Enable breach monitoring. Boolean.
         filter -- Rule filter. String.
         name -- Rule name. String.
         permissions -- String. (private / public)
         priority -- String. (high / medium / low)
+        substring_matching_enabled -- Enable substring matching. Boolean.
         topic -- Rule topic. String.
 
         This method only supports keywords for providing arguments.
@@ -799,11 +838,12 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def delete_rules(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def delete_rules(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Delete monitoring rules.
 
         Keyword arguments:
         ids -- List of rule IDs to delete. String or list of strings.
+        notificationsDeletionRequested -- Should notifications generated by this rule be deleted. Boolean.
         parameters - full parameters payload, not required if ids is provided as a keyword.
 
         Arguments: When not specified, the first argument to this method is assumed to be 'ids'.
@@ -825,25 +865,29 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def update_rules(self: object, body: dict = None, **kwargs) -> dict:
+    def update_rules(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Update monitoring rules.
 
         Keyword arguments:
         body -- full body payload, not required when using other keywords.
                 [
                     {
+                        "breach_monitoring_enabled": true,
                         "filter": "string",
                         "id": "string",
                         "name": "string",
                         "permissions": "string",
-                        "priority": "string"
+                        "priority": "string",
+                        "substring_matching_enabled": true
                     }
                 ]
+        breach_monitoring_enabled -- Enable breach monitoring. Boolean.
         filter -- Rule filter. String.
         name -- Rule name. String.
         permissions -- String. (private / public)
         priority -- String. (high / medium / low)
         id -- Rule ID. String.
+        substring_matching_enabled -- Enable substring matching. Boolean.
 
         This method only supports keywords for providing arguments.
 
@@ -867,7 +911,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_actions(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_actions(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Query actions based on provided criteria.
 
         Use the IDs from this response to get the action entities with get_actions.
@@ -966,7 +1010,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_notifications(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_notifications(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Query notifications based on provided criteria.
 
         Use the IDs from this response to get the notification
@@ -1006,7 +1050,7 @@ class Recon(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_rules(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_rules(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Query monitoring rules based on provided criteria.
 
         Use the IDs from this response to fetch the rules with get_rules.

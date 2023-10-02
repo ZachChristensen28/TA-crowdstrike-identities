@@ -35,6 +35,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, Union
 from ._util import force_default, process_service_request
 from ._payload import generic_payload_list, update_detects_payload
 from ._payload import aggregate_payload
@@ -56,7 +57,7 @@ class Detects(ServiceClass):
     """
 
     @force_default(defaults=["body"], default_types=["list"])
-    def get_aggregate_detects(self: object, body: list = None, **kwargs) -> dict:
+    def get_aggregate_detects(self: object, body: list = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get detect aggregates as specified via json in request body.
 
         Keyword arguments:
@@ -69,9 +70,13 @@ class Detects(ServiceClass):
                             "to": "string"
                         }
                         ],
+                        "exclude": "string",
                         "field": "string",
                         "filter": "string",
+                        "from": 0,
+                        "include": "string",
                         "interval": "string",
+                        "max_doc_count": 0,
                         "min_doc_count": 0,
                         "missing": "string",
                         "name": "string",
@@ -91,11 +96,20 @@ class Detects(ServiceClass):
                         "type": "string"
                     }
                 ]
-        date_ranges -- List of dictionaries.
-        field -- String.
-        filter -- FQL syntax. String.
+        date_ranges -- If peforming a date range query specify the from and to date ranges.
+                       These can be in common date formats like 2019-07-18 or now.
+                       List of dictionaries.
+        exclude -- Fields to exclude. String.
+        field -- Term you want to aggregate on. If doing a date_range query,
+                 this is the date field you want to apply the date ranges to. String.
+        filter -- Optional filter criteria in the form of an FQL query.
+                  For more information about FQL queries, see our FQL documentation in Falcon.
+                  String.
+        from -- Integer.
+        include -- Fields to include. String.
         interval -- String.
-        min_doc_count -- Minimum number of documents required to match. Integer.
+        max_doc_count -- Maximum number of documents. Integer.
+        min_doc_count -- Minimum number of documents. Integer.
         missing -- String.
         name -- Scan name. String.
         q -- FQL syntax. String.
@@ -127,7 +141,7 @@ class Detects(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def update_detects_by_ids(self: object, *args, body: dict = None, **kwargs) -> dict:
+    def update_detects_by_ids(self: object, *args, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Modify the state, assignee, and visibility of detections.
 
         Keyword arguments:
@@ -139,6 +153,9 @@ class Detects(ServiceClass):
                     "ids": [
                         "string"
                     ],
+                    "new_behaviors_processed": [
+                        "string"
+                    ],
                     "show_in_ui": true,
                     "status": "string"
                 }
@@ -147,6 +164,7 @@ class Detects(ServiceClass):
                    notes for other Falcon users. A detection can have multiple comments
                    over time.
         ids -- ID(s) of the detection to update. String or list of strings.
+        new_behaviors_processed -- String or list of strings.
         show_in_ui -- Boolean determining if this detection is displayed in the Falcon
                       console.
         status -- Current status of the detection. Allowed values:
@@ -193,7 +211,7 @@ class Detects(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def get_detect_summaries(self: object, *args, body: dict = None, **kwargs) -> dict:
+    def get_detect_summaries(self: object, *args, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """View information about detections.
 
         Keyword arguments:
@@ -231,7 +249,7 @@ class Detects(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_detects(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_detects(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for detection IDs that match a given query.
 
         Keyword arguments:

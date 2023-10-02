@@ -35,6 +35,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, Union
 from ._util import generate_error_result, force_default, args_to_params
 from ._util import process_service_request, handle_single_argument
 from ._payload import generic_payload_list, device_policy_payload, default_device_policy_config_payload
@@ -56,7 +57,7 @@ class DeviceControlPolicies(ServiceClass):
     """
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_combined_policy_members(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_combined_policy_members(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for a Device Control Policy members and return full detail.
 
         Search for members of a Device Control Policy in your environment by
@@ -92,7 +93,7 @@ class DeviceControlPolicies(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_combined_policies(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_combined_policies(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for a Device Control Policies and return full detail.
 
         Search for Device Control Policies in your environment by providing an FQL filter and
@@ -209,12 +210,12 @@ class DeviceControlPolicies(ServiceClass):
             )
 
     @force_default(defaults=["parameters", "body"], default_types=["dict", "dict"])
-    def perform_action(self: object, body: dict = None, parameters: dict = None, **kwargs) -> dict:
+    def perform_action(self: object, body: dict = None, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Perform a Device Control Policy action.
 
         Keyword arguments:
-        action_name -- action to perform: 'add-host-group', 'disable', 'enable',
-                       or 'remove-host-group'.
+        action_name -- action to perform: 'add-host-group', 'add-rule-group', 'disable', 'enable',
+                       'remove-rule-group' or 'remove-host-group'.
         action_parameters -- Action specific parameter options. List of dictionaries.
                              {
                                  "name": "string",
@@ -277,7 +278,7 @@ class DeviceControlPolicies(ServiceClass):
         return returned
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def set_precedence(self: object, body: dict = None, **kwargs) -> dict:
+    def set_precedence(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Set Device Control Policy precedence.
 
         Sets the precedence of Device Control Policies based on the order of IDs specified in
@@ -319,7 +320,7 @@ class DeviceControlPolicies(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def get_policies(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def get_policies(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Retrieve a set of Device Control Policies by specifying their IDs.
 
         Keyword arguments:
@@ -346,48 +347,62 @@ class DeviceControlPolicies(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def create_policies(self: object, body: dict = None, **kwargs) -> dict:
+    def create_policies(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Create Device Control Policies by specifying details about the policy to create.
 
         Keyword arguments:
         body -- full body payload, not required if keywords are used.
                 {
-                "resources": [
-                    {
-                        "clone_id": "string",
-                        "description": "string",
-                        "name": "string",
-                        "platform_name": "Windows",
-                        "settings": {
-                            "classes": [
-                            {
-                                "action": "FULL_ACCESS",
-                                "exceptions": [
-                                {
-                                    "action": "string",
-                                    "class": "string",
-                                    "combined_id": "string",
-                                    "id": "string",
-                                    "match_method": "string",
-                                    "product_id": "string",
-                                    "product_id_decimal": "string",
-                                    "product_name": "string",
-                                    "serial_number": "string",
-                                    "vendor_id": "string",
-                                    "vendor_id_decimal": "string",
-                                    "vendor_name": "string"
-                                }
+                    "resources": [
+                        {
+                            "clone_id": "string",
+                            "description": "string",
+                            "name": "string",
+                            "platform_name": "Windows",
+                            "settings": {
+                                "classes": [
+                                    {
+                                        "action": "FULL_ACCESS",
+                                        "exceptions": [
+                                            {
+                                                "action": "string",
+                                                "combined_id": "string",
+                                                "description": "string",
+                                                "expiration_time": "2023-06-08T06:04:53.563Z",
+                                                "id": "string",
+                                                "product_id": "string",
+                                                "product_id_decimal": "string",
+                                                "product_name": "string",
+                                                "serial_number": "string",
+                                                "use_wildcard": true,
+                                                "vendor_id": "string",
+                                                "vendor_id_decimal": "string",
+                                                "vendor_name": "string"
+                                            }
+                                        ],
+                                        "id": "string"
+                                    }
                                 ],
-                                "id": "string"
+                                "custom_notifications": {
+                                    "blocked_notification": {
+                                        "custom_message": "string",
+                                        "use_custom": true
+                                    },
+                                    "restricted_notification": {
+                                        "custom_message": "string",
+                                        "use_custom": true
+                                    }
+                                },
+                                "delete_exceptions": [
+                                    "string"
+                                ],
+                                "end_user_notification": "SILENT",
+                                "enforcement_mode": "MONITOR_ONLY",
+                                "enhanced_file_metadata": true
                             }
-                            ],
-                            "end_user_notification": "TRUE",
-                            "enforcement_mode": "string",
-                            "id": "string"
                         }
-                    }
-                ]
-            }
+                    ]
+                }
         clone_id -- ID of the Device Control Policy to clone. String.
         description -- Device Control Policy description. String.
         name -- Device Control Policy name. String.
@@ -416,7 +431,7 @@ class DeviceControlPolicies(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def delete_policies(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def delete_policies(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Delete a set of Device Control Policies by specifying their IDs.
 
         Keyword arguments:
@@ -443,48 +458,61 @@ class DeviceControlPolicies(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def update_policies(self: object, body: dict = None, **kwargs) -> dict:
+    def update_policies(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Update Device Control Policies by specifying the ID of the policy and details to update.
 
         Keyword arguments:
         body -- full body payload, not required if keywords are used.
                 {
-                "resources": [
-                    {
-                        "clone_id": "string",
-                        "description": "string",
-                        "name": "string",
-                        "platform_name": "Windows",
-                        "settings": {
-                            "classes": [
-                            {
-                                "action": "FULL_ACCESS",
-                                "exceptions": [
-                                {
-                                    "action": "string",
-                                    "class": "string",
-                                    "combined_id": "string",
-                                    "id": "string",
-                                    "match_method": "string",
-                                    "product_id": "string",
-                                    "product_id_decimal": "string",
-                                    "product_name": "string",
-                                    "serial_number": "string",
-                                    "vendor_id": "string",
-                                    "vendor_id_decimal": "string",
-                                    "vendor_name": "string"
-                                }
+                    "resources": [
+                        {
+                            "description": "string",
+                            "id": "string",
+                            "name": "string",
+                            "settings": {
+                                "classes": [
+                                    {
+                                        "action": "FULL_ACCESS",
+                                        "exceptions": [
+                                            {
+                                                "action": "string",
+                                                "combined_id": "string",
+                                                "description": "string",
+                                                "expiration_time": "2023-06-08T06:10:39.965Z",
+                                                "id": "string",
+                                                "product_id": "string",
+                                                "product_id_decimal": "string",
+                                                "product_name": "string",
+                                                "serial_number": "string",
+                                                "use_wildcard": true,
+                                                "vendor_id": "string",
+                                                "vendor_id_decimal": "string",
+                                                "vendor_name": "string"
+                                            }
+                                        ],
+                                        "id": "string"
+                                    }
                                 ],
-                                "id": "string"
+                                "custom_notifications": {
+                                    "blocked_notification": {
+                                        "custom_message": "string",
+                                        "use_custom": true
+                                    },
+                                    "restricted_notification": {
+                                        "custom_message": "string",
+                                        "use_custom": true
+                                    }
+                                },
+                                "delete_exceptions": [
+                                    "string"
+                                ],
+                                "end_user_notification": "SILENT",
+                                "enforcement_mode": "MONITOR_ONLY",
+                                "enhanced_file_metadata": true
                             }
-                            ],
-                            "end_user_notification": "TRUE",
-                            "enforcement_mode": "string",
-                            "id": "string"
                         }
-                    }
-                ]
-            }
+                    ]
+                }
         id -- ID of the Device Control Policy to update. String.
         description -- Device Control Policy description. String.
         name -- Device Control Policy name. String.
@@ -512,7 +540,7 @@ class DeviceControlPolicies(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_policy_members(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_policy_members(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for a Device Control Policy members and return their IDs.
 
         Search for members of a Device Control Policy in your environment by providing
@@ -548,7 +576,7 @@ class DeviceControlPolicies(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_policies(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_policies(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Search for a Device Control Policies and return their IDs.
 
         Search for Device Control Policies in your environment by providing an

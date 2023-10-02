@@ -35,158 +35,202 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
-import time
+# pylint: disable=R0902,R0913
+from typing import Dict, Optional, Union
+from ._auth_object import FalconInterface
+from ._error import CannotRevokeToken
 from ._util import (
-    perform_request,
-    generate_b64cred,
     confirm_base_url,
-    generate_error_result,
-    autodiscover_region,
+    generate_ok_result,
     )
-from ._token_fail_reason import TokenFailReason
-from ._endpoint._oauth2 import _oauth2_endpoints as Endpoints
 
 
-class OAuth2:
-    """To create an instance of this class, you must pass your client_id and client_secret.
+class OAuth2(FalconInterface):
+    """OAuth2 Service Class.
 
-    OR a properly formatted dictionary containing your client_id and client_secret
-    for the key you wish to use to connect to the API.
+    To create an instance of this class you must provide either:
+        - your client_id and client_secret.
+        - a properly formatted dictionary containing your client_id and client_secret
+          Example:
+          {
+              "client_id": FALCON_CLIENT_ID,
+              "client_secret": FALCON_CLIENT_SECRET,
+              "member_cid": OPTIONAL_CHILD_CID
+          }
+        - a valid access_token
 
-    Credential dictionary example:
-    {
-        "client_id": FALCON_CLIENT_ID,
-        "client_secret": FALCON_CLIENT_SECRET
-    }
+    All other class constructor arguments are optional.
+
+    OAuth2 is the only Service Class that inherits directly from the FalconAuth object.
+    This means the OAuth2 class does not maintain an auth_object, as it is one.
     """
 
-    # pylint: disable=too-many-instance-attributes,too-many-arguments
-    def __init__(self: object, base_url: str = "https://api.crowdstrike.com",
-                 ssl_verify: bool = True, proxy: dict = None, timeout: float or tuple = None,
-                 creds: dict = None, client_id: str = None, client_secret: str = None,
-                 user_agent: str = None, member_cid: str = None, renew_window: int = 120):
-        """Class constructor.
+    def __init__(self,
+                 access_token: Optional[Union[str, bool]] = False,
+                 base_url: Optional[str] = "https://api.crowdstrike.com",
+                 ssl_verify: Optional[bool] = True,
+                 proxy: Optional[Dict[str, str]] = None,
+                 timeout: Optional[Union[float, tuple]] = None,
+                 creds: Optional[Dict[str, str]] = None,
+                 client_id: Optional[str] = None,
+                 client_secret: Optional[str] = None,
+                 user_agent: Optional[str] = None,
+                 member_cid: Optional[str] = None,
+                 renew_window: Optional[int] = 120,
+                 debug: Optional[bool] = False,
+                 debug_record_count: Optional[int] = None,
+                 sanitize_log: Optional[bool] = None,
+                 pythonic: Optional[bool] = None
+                 ):
+        """Construct an instance of the class.
 
         Initializes the base class by ingesting credentials,
-        the proxies dictionary and specifications
-        for the base URL, SSL verification, and timeouts.
+        the proxy dictionary and specifications for other attributes
+        such as the base URL, SSL verification, and timeout.
 
-        Keyword arguments:
-        base_url: CrowdStrike API URL to use for requests. [Default: US-1]
-        ssl_verify: Boolean specifying if SSL verification should be used. [Default: True]
-        proxy: Dictionary of proxies to be used for requests.
-        timeout: Float or tuple specifying timeouts to use for requests.
-        creds: Dictionary containing CrowdStrike API credentials.
-               Mutually exclusive to client_id / client_secret.
-        client_id: Client ID for the CrowdStrike API. Mutually exclusive to creds.
-        client_secret: Client Secret for the CrowdStrike API. Mutually exclusive to creds.
-        member_cid: Child CID to connect to. Mutually exclusive to creds.
-        renew_window: Amount of time (in seconds) between now and the token expiration before
-                      a refresh of the token is performed. Default: 120, Max: 1200
-                      Values over 1200 will be reset to the maximum.
+        Keyword arguments
+        ----
+        base_url : str
+            CrowdStrike API URL to use for requests. [Default: US-1]
+        ssl_verify : bool
+            Flag specifying if SSL verification should be used. [Default: True]
+        proxy : dict
+            Dictionary of proxies to be used for requests.
+        timeout : float or tuple
+            Value specifying timeouts to use for requests.
+        creds : dict
+            Dictionary containing CrowdStrike API credentials.
+            Mutually exclusive to client_id / client_secret.
+        client_id : str
+            Client ID for the CrowdStrike API. Mutually exclusive to creds.
+        client_secret : str
+            Client Secret for the CrowdStrike API. Mutually exclusive to creds.
+        member_cid : str
+            Child CID to connect to. Mutually exclusive to creds.
+        renew_window : int
+            Amount of time (in seconds) between now and the token expiration before
+            a refresh of the token is performed. Default: 120, Max: 1200
+            Values over 1200 will be reset to the maximum.
 
+        Arguments
+        ----
         This method only supports keywords to specify arguments.
+
+        Returns
+        ----
+        class (OAuth2)
+            A constructed instance of the OAuth2 Service Class.
         """
-        if client_id and client_secret and not creds:
-            creds = {
-                "client_id": client_id,
-                "client_secret": client_secret
-            }
-            # Have to pass member_cid the same way you pass client_id / secret
-            # If you use a creds dictionary, pass the member_cid there instead
-            if member_cid:
-                creds["member_cid"] = member_cid
-        elif not creds:
-            creds = {}
+        super().__init__(base_url=confirm_base_url(base_url),
+                         ssl_verify=ssl_verify,
+                         timeout=timeout,
+                         proxy=proxy,
+                         user_agent=user_agent,
+                         access_token=access_token,
+                         creds=creds,
+                         client_id=client_id,
+                         client_secret=client_secret,
+                         member_cid=member_cid,             # |
+                         renew_window=renew_window,         # /\
+                         debug=debug,                      # |o
+                         debug_record_count=debug_record_count,
+                         sanitize_log=sanitize_log,
+                         pythonic=pythonic
+                         )
 
-        self.creds = creds
-        self.base_url = confirm_base_url(base_url)
-        self.ssl_verify = ssl_verify
-        self.timeout = timeout
-        self.proxy = proxy
-        self.user_agent = user_agent
-        self.token_expiration = 0
-        # Maximum renewal window is 20 minutes, Minimum is 2 minutes
-        self.token_renew_window = max(min(renew_window, 1200), 120)
-        self.token_time = time.time()
-        self.token_value = False
-        self.token_expired = lambda: bool(
-            (time.time() - self.token_time) >= (self.token_expiration - self.token_renew_window)
-            )
-        self.token_fail_reason = None
-        self.token_status = None
-        self.authenticated = lambda: not bool(self.token_expired())
+    def logout(self) -> Dict[str, Union[int, dict]]:
+        """Revoke the current token.
 
-    def token(self: object) -> dict:
-        """Generate an authorization token.
+        Keyword arguments
+        ----
+        This method does not accept keyword arguments.
 
-        This method does not accept arguments or keywords.
+        Arguments
+        ----
+        This method does not accept arguments.
 
-        Returns: dict object containing API response.
+        Returns
+        ----
+        dict
+            Dictionary object containing API response.
         """
-        operation_id = "oauth2AccessToken"
-        target_url = f"{self.base_url}{[ep[2] for ep in Endpoints if operation_id in ep[0]][0]}"
-        header_payload = {}
-        if "client_id" in self.creds and "client_secret" in self.creds:
-            data_payload = {
-                'client_id': self.creds['client_id'],
-                'client_secret': self.creds['client_secret']
-            }
-            if "member_cid" in self.creds:
-                data_payload["member_cid"] = self.creds["member_cid"]
-            returned = perform_request(method="POST", endpoint=target_url, data=data_payload,
-                                       headers=header_payload, verify=self.ssl_verify,
-                                       proxy=self.proxy, timeout=self.timeout,
-                                       user_agent=self.user_agent)
-            if isinstance(returned, dict):  # Issue #433
-                self.token_status = returned["status_code"]
-                if self.token_status == 201:
-                    self.token_expiration = returned["body"]["expires_in"]
-                    self.token_time = time.time()
-                    self.token_value = returned["body"]["access_token"]
-                    self.token_fail_reason = None
-                    self.base_url = autodiscover_region(self.base_url, returned)
-                else:
-                    if "errors" in returned["body"]:
-                        if returned["body"]["errors"]:
-                            self.token_fail_reason = returned["body"]["errors"][0]["message"]
+        try:
+            returned: dict = super().logout()
+            if returned["status_code"] == 200:
+                returned = generate_ok_result(message="Current token successfully revoked.",
+                                              headers=returned["headers"]
+                                              )
             else:
-                returned = generate_error_result("Unexpected API response received", 403)
-                self.token_fail_reason = TokenFailReason["UNEXPECTED"].value
-                self.token_status = 403
-        else:
-            returned = generate_error_result("Invalid credentials specified", 403)
-            self.token_fail_reason = TokenFailReason["INVALID"].value
-            self.token_status = 403
+                raise CannotRevokeToken(returned["status_code"], returned["body"]["errors"][0]["message"], returned["headers"])
+        except CannotRevokeToken as unable_to_revoke:
+            if self.log:
+                self.log.warning("Token revocation operation failed.")
+            returned = unable_to_revoke.result
 
         return returned
 
-    def revoke(self: object, token: str) -> dict:
+    def revoke(self, token: str, alter_state: bool = False, client_id: str = None) -> Dict[str, Union[int, dict]]:
         """Revoke the specified authorization token.
 
-        Keyword arguments:
-        token: Token string to be revoked.
+        HTTP Method: POST
 
+        Swagger URL
+        ----
+        https://assets.falcon.crowdstrike.com/support/api/swagger.html#/oauth2/oauth2RevokeToken
+
+        Keyword arguments
+        ----
+        client_id : str
+            Client ID of the token to be revoked.
+        token : str
+            Token string to be revoked.
+        alter_state : bool
+            Flag indicating if the underlying authentication state is changed by this request.
+
+        Arguments
+        ----
         When not specified as a keyword, token is assumed as the only accepted argument.
 
-        Returns: dict object containing API response.
+        Returns
+        ----
+        dict
+            Dictionary containing API response.
         """
-        operation_id = "oauth2RevokeToken"
-        target_url = f"{self.base_url}{[ep[2] for ep in Endpoints if operation_id in ep[0]][0]}"
-        if "client_id" in self.creds and "client_secret" in self.creds:
-            b64cred = generate_b64cred(self.creds["client_id"], self.creds["client_secret"])
-            header_payload = {"Authorization": f"basic {b64cred}"}
-            data_payload = {"token": f"{token}"}
-            returned = perform_request(method="POST", endpoint=target_url, data=data_payload,
-                                       headers=header_payload, verify=self.ssl_verify,
-                                       proxy=self.proxy, timeout=self.timeout,
-                                       user_agent=self.user_agent)
-            self.token_expiration = 0
-            self.token_value = False
-        else:
-            returned = generate_error_result("Invalid credentials specified", 403)
+        return self._logout_handler(token, not alter_state, client_id)
 
-        return returned
+    def token(self, alter_state: bool = False) -> Dict[str, Union[int, dict]]:
+        """Generate an authorization token.
+
+        HTTP Method: POST
+
+        Swagger URL
+        ----
+        https://assets.falcon.crowdstrike.com/support/api/swagger.html#/oauth2/oauth2AccessToken
+
+        Keyword arguments
+        ----
+        alter_state : bool
+            Flag indicating if the underlying authentication state is changed by this request.
+
+        Arguments
+        ----
+        When not specified as a keyword, alter_state is assumed as the only accepted argument.
+
+        Returns
+        ----
+        dict
+            Dictionary object containing API response.
+        """
+        return self._login_handler(not alter_state)
+
+    # Legacy method handlers that recreates pre-1.3 functionality.
+    def authenticated(self) -> bool:
+        """Return the current authentication status."""
+        return self.token_valid
+
+    def token_expired(self) -> bool:
+        """Return the current token expiration status."""
+        return self.token_stale
 
     # These method names align to the operation IDs in the API but
     # do not conform to snake_case / PEP8 and are defined here for

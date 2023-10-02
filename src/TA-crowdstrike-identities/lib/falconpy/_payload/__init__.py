@@ -37,7 +37,7 @@ from ._recon import (
     recon_export_job_payload
     )
 from ._malquery import malquery_exact_search_payload, malquery_hunt_payload, malquery_fuzzy_payload
-from ._container import image_payload
+from ._container import image_payload, registry_payload
 from ._detects import update_detects_payload
 from ._incidents import incident_action_parameters
 from ._ioa import ioa_exclusion_payload, ioa_custom_payload
@@ -47,10 +47,20 @@ from ._response_policy import response_policy_payload
 from ._real_time_response import command_payload, data_payload
 from ._cloud_connect_aws import aws_registration_payload
 from ._ioc import indicator_payload, indicator_update_payload, indicator_report_payload
-from ._d4c_registration import azure_registration_payload, aws_d4c_registration_payload
+from ._d4c_registration import (
+    azure_registration_payload,
+    aws_d4c_registration_payload,
+    gcp_registration_payload
+    )
 from ._cspm_registration import cspm_registration_payload, cspm_policy_payload, cspm_scan_payload
 from ._device_control_policy import device_policy_payload, default_device_policy_config_payload
 from ._falconx import falconx_payload
+from ._filevantage import (
+    filevantage_rule_group_payload,
+    filevantage_rule_payload,
+    filevantage_policy_payload,
+    filevantage_scheduled_exclusion_payload
+    )
 from ._mssp import mssp_payload
 from ._firewall import (
     firewall_policy_payload,
@@ -67,6 +77,7 @@ from ._message_center import activity_payload, case_payload
 from ._alerts import update_alerts_payload
 from ._sample_uploads import extraction_payload
 from ._ods import scheduled_scan_payload
+from ._cloud_snapshots import snapshot_inventory_payload, snapshot_registration_payload
 
 
 __all__ = [
@@ -86,5 +97,8 @@ __all__ = [
     "aws_d4c_registration_payload", "image_payload", "indicator_report_payload",
     "extraction_payload", "simple_action_parameter", "network_locations_metadata_payload",
     "network_locations_create_payload", "scheduled_scan_payload", "token_settings_payload",
-    "recon_export_job_payload", "default_device_policy_config_payload"
+    "recon_export_job_payload", "default_device_policy_config_payload", "registry_payload",
+    "gcp_registration_payload", "filevantage_rule_group_payload", "filevantage_rule_payload",
+    "filevantage_policy_payload", "filevantage_scheduled_exclusion_payload",
+    "snapshot_inventory_payload", "snapshot_registration_payload"
 ]

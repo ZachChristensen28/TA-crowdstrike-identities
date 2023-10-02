@@ -35,6 +35,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
+from typing import Dict, Union
 from ._util import force_default, process_service_request, handle_single_argument
 from ._payload import generic_payload_list, aggregate_payload
 from ._service_class import ServiceClass
@@ -55,7 +56,7 @@ class Quarantine(ServiceClass):
     """
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def action_update_count(self: object, *args, parameters: dict = None, **kwargs) -> dict:
+    def action_update_count(self: object, *args, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Return the count of potentially affected quarantined files for each action.
 
         Keyword arguments:
@@ -82,46 +83,57 @@ class Quarantine(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def get_aggregate_files(self: object, body: dict = None, **kwargs) -> dict:
+    def get_aggregate_files(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get quarantine file aggregates as specified via json in request body.
 
         Keyword arguments:
         body -- full body payload, not required when using other keywords.
-                [
+                {
+                    "date_ranges": [
                     {
-                        "date_ranges": [
-                        {
-                            "from": "string",
-                            "to": "string"
-                        }
-                        ],
-                        "field": "string",
-                        "filter": "string",
-                        "interval": "string",
-                        "min_doc_count": 0,
-                        "missing": "string",
-                        "name": "string",
-                        "q": "string",
-                        "ranges": [
-                        {
-                            "From": 0,
-                            "To": 0
-                        }
-                        ],
-                        "size": 0,
-                        "sort": "string",
-                        "sub_aggregates": [
-                        null
-                        ],
-                        "time_zone": "string",
-                        "type": "string"
+                        "from": "string",
+                        "to": "string"
                     }
-                ]
-        date_ranges -- List of dictionaries.
-        field -- String.
-        filter -- FQL syntax. String.
+                    ],
+                    "exclude": "string",
+                    "field": "string",
+                    "filter": "string",
+                    "from": 0,
+                    "include": "string",
+                    "interval": "string",
+                    "max_doc_count": 0,
+                    "min_doc_count": 0,
+                    "missing": "string",
+                    "name": "string",
+                    "q": "string",
+                    "ranges": [
+                    {
+                        "From": 0,
+                        "To": 0
+                    }
+                    ],
+                    "size": 0,
+                    "sort": "string",
+                    "sub_aggregates": [
+                        null
+                    ],
+                    "time_zone": "string",
+                    "type": "string"
+                }
+        date_ranges -- If peforming a date range query specify the from and to date ranges.
+                       These can be in common date formats like 2019-07-18 or now.
+                       List of dictionaries.
+        exclude -- Fields to exclude. String.
+        field -- Term you want to aggregate on. If doing a date_range query,
+                 this is the date field you want to apply the date ranges to. String.
+        filter -- Optional filter criteria in the form of an FQL query.
+                  For more information about FQL queries, see our FQL documentation in Falcon.
+                  String.
+        from -- Integer.
+        include -- Fields to include. String.
         interval -- String.
-        min_doc_count -- Minimum number of documents required to match. Integer.
+        max_doc_count -- Maximum number of documents. Integer.
+        min_doc_count -- Minimum number of documents. Integer.
         missing -- String.
         name -- Scan name. String.
         q -- FQL syntax. String.
@@ -152,7 +164,7 @@ class Quarantine(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def get_quarantine_files(self: object, body: dict = None, **kwargs) -> dict:
+    def get_quarantine_files(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get quarantine file metadata for specified ids.
 
         Keyword arguments:
@@ -187,7 +199,7 @@ class Quarantine(ServiceClass):
             )
 
     @force_default(defaults=["body"], default_types=["dict"])
-    def update_quarantined_detects_by_id(self: object, body: dict = None, **kwargs) -> dict:
+    def update_quarantined_detects_by_id(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Apply action by quarantine file ids.
 
         Keyword arguments:
@@ -230,7 +242,7 @@ class Quarantine(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def query_quarantine_files(self: object, parameters: dict = None, **kwargs) -> dict:
+    def query_quarantine_files(self: object, parameters: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Get quarantine file ids that match the provided filter criteria.
 
         Keyword arguments:
@@ -286,7 +298,7 @@ class Quarantine(ServiceClass):
             )
 
     @force_default(defaults=["parameters"], default_types=["dict"])
-    def update_quarantined_detects_by_query(self: object, body: dict = None, **kwargs) -> dict:
+    def update_quarantined_detects_by_query(self: object, body: dict = None, **kwargs) -> Dict[str, Union[int, dict]]:
         """Apply quarantine file actions by query.
 
         Keyword arguments:
