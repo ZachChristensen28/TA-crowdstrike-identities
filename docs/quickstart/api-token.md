@@ -7,7 +7,8 @@ In CrowdStrike, create a new API token with the following permissions:
 
 API | Permissions
 --- | -----------
-Identity Protection Entities | **Read & Write**
+Identity Protection Entities | :white_check_mark: **Read & Write**
+Identity Protection GraphQL | :white_check_mark: **Write**
 
 _<small>**reference:** [https://falcon.crowdstrike.com/documentation/184/identity-protection-apis](https://falcon.crowdstrike.com/documentation/184/identity-protection-apis){ target="_blank" }</small>_
 
