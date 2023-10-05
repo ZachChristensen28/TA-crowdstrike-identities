@@ -14,6 +14,7 @@ Released: [October 5, 2023 <small>:icon-link-external:</small>](https://github.c
 
 +++ Improved :icon-thumbsup:
 - [x] Updated Splunk Add-on version to 4.1.3.
+- [x] Updated Splunk Python SDK to version 1.7.4
 +++
 
 **Full Changelog**: [v1.0.1...v1.0.2 <small>:icon-link-external:</small>](https://github.com/ZachChristensen28/TA-crowdstrike-identities/compare/v1.0.1...v1.0.2){ target="blank" }
