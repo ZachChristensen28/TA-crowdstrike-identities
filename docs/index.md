@@ -24,8 +24,7 @@ This documentation assumes the following:
 Info | Description
 ------|----------
 TA-crowdstrike-devices | 1.0.2 - [Splunkbase <small>:icon-link-external:</small>](https://splunkbase.splunk.com/app/6893){ target="blank" } \| [GitHub <small>:icon-link-external:</small>](https://github.com/ZachChristensen28/TA-crowdstrike-identities/releases){ target="blank" }
-CrowdStrike Falcon Identity Protection <small>(Required)</small> | [Find out morex <small>:icon-link-external:</small>](https://splunkbase.splunk.com/app/263){ target="blank" }
-Crowdstrike Devices Add-on <small>(Required)</small> | [3.x <small>:icon-link-external:</small>][crowdstrike-identity]{ target="blank" }
+CrowdStrike Falcon Identity Protection <small>(Required)</small> | [Find out more <small>:icon-link-external:</small>][crowdstrike-identity]){ target="blank" }
 Add-on has a web UI | Yes, this add-on has a setup page.
 
 [crowdstrike]: https://www.crowdstrike.com
