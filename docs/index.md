@@ -19,6 +19,11 @@ This documentation assumes the following:
 2. You have [CrowdStrike Falcon Identity Protection <small>:icon-link-external:</small>][crowdstrike-identity]{ target="blank" }
 3. Basic familiarity with Splunk and CrowdStrike.
 
+!!!success SA-CrowdStrikeIdentities for Enterprise Security
+-![](https://preview.splunkbase.splunk.com/_next/image?url=https://cdn.splunkbase.splunk.com/media/public/icons/79aa2ae8-0655-11ee-b0b0-ca5c4bb4597f.png&w=96&q=75)
+Be sure to checkout [SA-CrowdStrikeIdentities <small>:icon-link-external:</small>](https://splunkbase.splunk.com/app/6930){ target="blank" } for Enterprise Security to automatically populate your asset database using this data.
+!!!
+
 ## About
 
 Info | Description
