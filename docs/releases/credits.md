@@ -1,3 +1,7 @@
+---
+icon: star
+---
+
 # Credits
 
 This add-on was developed using the following:

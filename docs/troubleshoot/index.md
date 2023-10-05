@@ -1,3 +1,9 @@
+---
+order: -4
+label: Troubleshooting
+icon: question
+---
+
 # Modular Input
 
 If no logs appear in the index you specified after configuring the input, use the following to troubleshoot.
