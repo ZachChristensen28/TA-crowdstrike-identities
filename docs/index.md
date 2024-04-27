@@ -28,7 +28,7 @@ Be sure to checkout [SA-CrowdStrikeIdentities <small>:icon-link-external:</small
 
 Info | Description
 ------|----------
-TA-crowdstrike-devices | 1.0.2 - [Splunkbase <small>:icon-link-external:</small>](https://splunkbase.splunk.com/app/6893){ target="blank" } \| [GitHub <small>:icon-link-external:</small>](https://github.com/ZachChristensen28/TA-crowdstrike-identities/releases){ target="blank" }
+TA-crowdstrike-devices | 1.0.3 - [Splunkbase <small>:icon-link-external:</small>](https://splunkbase.splunk.com/app/6893){ target="blank" } \| [GitHub <small>:icon-link-external:</small>](https://github.com/ZachChristensen28/TA-crowdstrike-identities/releases){ target="blank" }
 CrowdStrike Falcon Identity Protection <small>(Required)</small> | [Find out more <small>:icon-link-external:</small>][crowdstrike-identity]){ target="blank" }
 Add-on has a web UI | Yes, this add-on has a setup page.
 
