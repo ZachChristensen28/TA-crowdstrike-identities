@@ -8,7 +8,22 @@ label: Releases
 
 Latest release can be found on [Splunkbase <small>:icon-link-external:</small>](https://splunkbase.splunk.com/app/6893){ target="blank" } or [GitHub <small>:icon-link-external:</small>](https://github.com/ZachChristensen28/TA-crowdstrike-identities/releases){ target="blank" }.
 
-## v1.0.2 [!badge text="LATEST" variant="info"]
+## v1.0.3 [!badge text="LATEST" variant="info"]
+
+Released: [April 27, 2024 <small>:icon-link-external:</small>](https://github.com/ZachChristensen28/TA-crowdstrike-identities/releases/tag/v1.0.3){ target="blank" }
+
++++ Fixed :icon-bug:
+- [x] Removed `learned: false` from GraphQL query - [#29](https://github.com/ZachChristensen28/TA-crowdstrike-identities/issues/29){ target="blank" }
++++ New :icon-shield-check:
+- [x] Changed app logos to be more generic
+- [x] Changed license to SPLUNK GENERAL TERMS 
++++
+
+**Full Changelog**: [v1.0.2...v1.0.3 <small>:icon-link-external:</small>](https://github.com/ZachChristensen28/TA-crowdstrike-identities/compare/v1.0.2...v1.0.3){ target="blank" }
+
+---
+
+## v1.0.2
 
 Released: [October 5, 2023 <small>:icon-link-external:</small>](https://github.com/ZachChristensen28/TA-crowdstrike-identities/releases/tag/v1.0.2){ target="blank" }
 
