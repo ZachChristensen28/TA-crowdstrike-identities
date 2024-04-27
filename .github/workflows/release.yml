@@ -6,7 +6,7 @@ on:
       - master
       - main
     paths:
-      - "TA-crowdstrike-identites/**"
+      - "TA-crowdstrike-identities/**"
 
 permissions:
   contents: write
@@ -15,4 +15,4 @@ jobs:
   call-packaging-workflow:
     uses: ZachTheSplunker/app-wfa/.github/workflows/release.yml@main
     with:
-      package-name: TA-crowdstrike-identites
+      package-name: TA-crowdstrike-identities
