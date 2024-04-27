@@ -69,7 +69,6 @@ def collect_events(helper, ew):
         entities(
             types: [USER]
             archived: false
-            learned: false
             first: $first
             after: $after
             ~~~DOMAIN_FILTER~~~
